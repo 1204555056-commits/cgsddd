@@ -1,0 +1,3153 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>NARUTOMVU</title>
+    <style>
+        @import url("https://fontsapi.zeoseven.com/35/main/result.css");
+        @import url("https://fontsapi.zeoseven.com/72/main/result.css");
+        @import url("https://fontsapi.zeoseven.com/646/main/result.css");
+
+        /* Basic resets */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100%;
+            background-color: #eaddc5;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.08"/></svg>');
+            font-family: "DYmingA", serif;
+            font-weight: normal;
+            color: #2c2724;
+            overflow-x: hidden;
+            font-size: 15px;
+        }
+
+        /* Top Header */
+        .top-scroll {
+            width: 100%;
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px dashed #4a4036;
+            background: linear-gradient(180deg, rgba(234,221,197,1) 0%, rgba(224,208,179,1) 100%);
+            box-shadow: 0 4px 6px -4px rgba(0,0,0,0.3);
+        }
+
+        .world-status {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 0 15px;
+        }
+
+        .world-status.left {
+            text-align: left;
+            align-items: flex-start;
+        }
+
+        .world-status.right {
+            text-align: right;
+            align-items: flex-end;
+        }
+
+        .logo-center {
+            flex: 0 0 auto;
+            width: 60px;
+            aspect-ratio: 1;
+            margin: 0;
+        }
+
+        .logo-center img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .world-time-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .header-text {
+            color: #2c2724;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .header-subtext {
+            color: #555;
+            font-size: 14px;
+        }
+
+        /* Accordion buttons */
+        .plaque-container {
+            display: flex;
+            width: 100%;
+            border-bottom: 2px solid #3e332a;
+            background: #4a3b2c;
+        }
+
+        .plaque-btn {
+            flex: 1;
+            background: linear-gradient(to bottom, #8c6b4a, #5c432a);
+            color: #eaddc5;
+            border: 1px solid #3e2a18;
+            border-top: none;
+            border-bottom: none;
+            text-align: center;
+            padding: 8px 0;
+            cursor: pointer;
+            font-family: "Zhi Mang Xing", cursive;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .plaque-btn:first-child { border-left: none; }
+        .plaque-btn:last-child { border-right: none; }
+
+        .plaque-btn:hover, .plaque-btn.active {
+            background: linear-gradient(to bottom, #a68461, #735537);
+            transform: scaleY(1.05);
+            transform-origin: top;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            color: #fff;
+            z-index: 2;
+        }
+
+        /* Content panels */
+        .content-area {
+            width: 100%;
+            padding: 25px 20px;
+            display: none;
+            background: rgba(255,255,255,0.3);
+            
+            box-sizing: border-box;
+        }
+        .content-area.active {
+            display: flex;
+            flex-direction: row; /* Default for panel-main */
+        }
+
+        .content-area.active {
+            display: flex;
+        }
+
+        /* Panel Main 3 columns */
+        #panel-main {
+            gap: 0;
+            padding-top: 30px;
+        }
+        .main-col-left {
+            flex: 1;
+            padding-right: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-col-center {
+            flex: 1.4;
+            padding: 0 25px;
+            background-image:
+                repeating-linear-gradient(to bottom, rgba(0,0,0,0.08) 0, rgba(0,0,0,0.08) 5px, transparent 5px, transparent 10px),
+                repeating-linear-gradient(to bottom, rgba(0,0,0,0.08) 0, rgba(0,0,0,0.08) 5px, transparent 5px, transparent 10px);
+            background-size: 1px 100%, 1px 100%;
+            background-position: left top, right top;
+            background-repeat: no-repeat, no-repeat;
+        }
+        .main-col-right {
+            flex: 1.2;
+            padding-left: 25px;
+        }
+
+        /* Left column: Avatar */
+        .avatar-container {
+            width: 100%;
+            flex: 1;
+            min-height: 0;
+            position: relative;
+            background: #d4c5b0;
+            border: 2px solid #2c2724;
+            clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .avatar-inner-frame {
+            position: absolute;
+            top: 4px; left: 4px; right: 4px; bottom: 4px;
+            border: 1px solid rgba(44,39,36,0.5);
+            pointer-events: none;
+            clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px);
+            z-index: 2;
+        }
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background-color: rgba(0,0,0,0.6);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.6);
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: monospace;
+            z-index: 3;
+            transition: all 0.2s;
+        }
+        .avatar-upload-btn:hover {
+            background-color: rgba(0,0,0,0.8);
+            border-color: #fff;
+        }
+        .name-row {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+        .name-text {
+            font-family: "DYmingA", serif;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: #000;
+        }
+        .age-text {
+            font-size: 14px;
+            color: #666;
+        }
+        .level-exp-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .level-badge {
+            background: #111;
+            color: #fff;
+            font-family: monospace;
+            padding: 3px 8px 3px 6px;
+            font-size: 13px;
+            font-weight: bold;
+            clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+            z-index: 2;
+        }
+        .exp-bar-container {
+            flex: 1;
+            height: 6px;
+            background: rgba(0,0,0,0.15);
+            margin-left: -4px;
+            position: relative;
+            z-index: 1;
+        }
+        .exp-bar-fill {
+            height: 100%;
+            background: #d4af37;
+            transition: width 0.3s;
+        }
+        .exp-text {
+            font-family: monospace;
+            font-size: 14px;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        /* Center column */
+        .status-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .status-icon {
+            width: 24px;
+            height: 24px;
+        }
+        .status-bar-container {
+            flex: 1;
+            height: 8px;
+            background: rgba(0,0,0,0.1);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        .status-bar-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+        .status-hp .status-bar-fill { background: #4a7c59; }
+        .status-hp svg { fill: #4a7c59; }
+        .status-chakra .status-bar-fill { background: #3b5998; }
+        .status-chakra svg { fill: #3b5998; }
+        .status-mind .status-bar-fill { background: #6b5b95; }
+        .status-mind svg { fill: #6b5b95; }
+        .status-text {
+            font-family: monospace;
+            font-weight: bold;
+            width: 70px;
+            text-align: right;
+            font-size: 15px;
+        }
+
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .stats-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #111;
+        }
+        .stats-points {
+            font-size: 15px;
+            font-weight: bold;
+            color: #777;
+            transition: color 0.3s;
+        }
+        .stats-points.active {
+            color: #b23a2a;
+            animation: breathing 2s infinite;
+        }
+        @keyframes breathing {
+            0% { text-shadow: 0 0 2px rgba(178,58,42,0.1); }
+            50% { text-shadow: 0 0 8px rgba(178,58,42,0.6); }
+            100% { text-shadow: 0 0 2px rgba(178,58,42,0.1); }
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .stat-box {
+            border: 1px solid rgba(62, 51, 42, 0.4);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 15px;
+            padding-bottom: 8px;
+            position: relative;
+        }
+        .stat-kanji {
+            font-family: "Zhi Mang Xing", cursive;
+            font-size: 32px;
+            font-weight: bold;
+            color: #111;
+            line-height: 1;
+        }
+        .stat-num {
+            font-family: monospace;
+            font-size: 18px;
+            margin-top: 6px;
+            font-weight: bold;
+            color: #111;
+        }
+        .stat-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            width: 100%;
+            justify-content: center;
+        }
+        .stat-btn {
+            cursor: pointer;
+            background: #2c2724;
+            color: #eaddc5;
+            border: none;
+            width: 20px;
+            height: 20px;
+            line-height: 18px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .stat-btn:hover { background: #b23a2a; }
+        .stat-btn:disabled { background: transparent; color: #999; cursor: not-allowed; border: 1px dashed #999; }
+
+        /* Right column */
+        .right-section { margin-bottom: 24px; }
+        .right-title {
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            color: #111;
+        }
+        .right-title svg {
+            width: 20px;
+            height: 20px;
+            fill: #111;
+        }
+        .identity-tag {
+            display: inline-block;
+            background: #2c2724;
+            color: #eaddc5;
+            padding: 6px 12px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+        .damage-box {
+            background: #2a2020;
+            color: #d66;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            border-left: 5px solid #b23a2a;
+            line-height: 1.4;
+        }
+        .desc-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #1a1a1a;
+            font-weight: bold;
+            font-family: "DYmingA", serif;
+        }
+        .separator-line {
+            width: 100%;
+            height: 1px;
+            border-bottom: 1px dashed rgba(0,0,0,0.15);
+            margin: 20px 0;
+        }
+        .ejac-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .ejac-bar-container {
+            height: 8px;
+            background: rgba(0,0,0,0.1);
+            flex: 1;
+        }
+        .ejac-bar-fill {
+            height: 100%;
+            background: #722f37;
+            transition: width 0.3s;
+        }
+        .ejac-text {
+            font-family: monospace;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        /* 动产区块 Phase 3 */
+        #panel-movable {
+            padding: 0 !important;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: transparent;
+        }
+        .movable-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid #3e332a;
+            background: #4a3b2c;
+            padding: 0 10px;
+        }
+        .movable-tabs {
+            display: flex;
+            align-items: flex-end;
+        }
+        .movable-tab {
+            padding: 8px 16px;
+            background: #2a2015;
+            color: #888;
+            cursor: pointer;
+            font-weight: normal;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            margin-right: 4px;
+            transition: all 0.2s;
+            font-size: 15px;
+        }
+        .movable-tab.active {
+            background: #5c4a38;
+            color: #eaddc5;
+            font-weight: bold;
+            border-bottom: 2px solid #b23a2a;
+        }
+        .movable-money {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding-bottom: 8px;
+            color: #d69e2e;
+        }
+        .money-label { color: #aaa; font-size: 14px; }
+        .money-value { font-family: monospace; font-size: 16px; min-width: 80px; text-align: right; }
+        .money-suffix { font-size: 14px; }
+
+        .movable-body {
+            display: flex;
+            flex: 1;
+            background: rgba(255,255,255,0.4);
+            min-height: 400px;
+        }
+        .movable-list {
+            overflow-x: hidden;
+            flex: 0 0 30%;
+            border-right: 1px dashed rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            max-height: 550px;
+        }
+        .movable-list-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+            transition: background 0.2s;
+        }
+        .movable-list-item:hover { background: rgba(0,0,0,0.05); }
+        .movable-list-item.active { background: rgba(200,180,150,0.4); }
+        .movable-list-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 2px;
+            background: #b23a2a;
+        }
+        .movable-list-item-row { display: flex; justify-content: space-between; align-items: center; }
+        .m-item-title { font-size: 14px; font-weight: bold; font-family: "DYmingA", serif; }
+        .m-item-qty { font-family: monospace; font-size: 12px; color: #555; }
+        .m-item-badge { font-size: 11px; padding: 2px 4px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px; }
+        .m-item-badge.core { border-color: #D69E2E; color: #D69E2E; }
+        .m-item-badge.worn { background: #2f4f4f; color: #fff; border-color: #2f4f4f; }
+        .m-item-badge.unworn { border-color: #666; color: #666; }
+
+        .movable-detail {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 10px;
+        }
+        .detail-title {
+            font-size: 18px;
+            font-weight: bold;
+            font-family: "DYmingA", serif;
+        }
+        .detail-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .detail-badge-box {
+            border: 1px solid rgba(0,0,0,0.3);
+            padding: 4px 8px;
+            font-size: 12px;
+            background: rgba(0,0,0,0.05);
+            font-family: "DYmingA", serif;
+        }
+
+        .detail-box-container {
+            background: rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.15);
+            border-radius: 3px;
+            padding: 12px 16px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            min-height: 60px;
+        }
+        .detail-section-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .detail-section-title::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 14px;
+            background: #b23a2a;
+        }
+        .detail-text {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .detail-bottom-cabin {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .cabin-row {
+            border: 1px dashed rgba(0,0,0,0.2);
+            padding: 6px 10px;
+            font-size: 11px;
+            font-style: italic;
+            color: #4a4a4a;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+
+        /* Colors for Rarities */
+        .color-普通 { color: #A0AEC0; }
+        .color-稀有 { color: #63B3ED; }
+        .color-史诗 { color: #B794F4; }
+        .color-传说, .color-核心 { color: #D69E2E; }
+        .color-六道级 { color: #E53E3E; }
+
+        .grad-普通 { border-bottom-color: #A0AEC0 !important; }
+        .grad-稀有 { border-bottom-color: #63B3ED !important; }
+        .grad-史诗 { border-bottom-color: #B794F4 !important; }
+        .grad-传说, .grad-核心 { border-bottom-color: #D69E2E !important; }
+        .grad-六道级 { border-bottom-color: #E53E3E !important; }
+
+        /* Progress Bar for Storage */
+        .hide-progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #ccc;
+            margin-top: 4px;
+            position: relative;
+        }
+        .hide-progress-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        /* 不动产区块 Phase 4 */
+        #panel-realestate {
+            padding: 0 !important;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: transparent;
+        }
+
+        .re-list-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            transition: background 0.2s;
+        }
+        .re-list-item:hover { background: rgba(0,0,0,0.05); }
+        .re-list-item.active { background: rgba(200,180,150,0.4); }
+        .re-list-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 2px;
+            background: #b23a2a;
+        }
+        .re-item-title { font-size: 14px; font-weight: bold; font-family: "DYmingA", serif; }
+        .re-item-title.house { color: #854D0E; }
+        .re-item-title.special { color: #1E3A8A; }
+        .re-item-badge { font-size: 11px; padding: 2px 4px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px; color: #57534E; }
+
+        .re-detail-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .re-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px dashed rgba(0,0,0,0.2);
+            padding-bottom: 12px;
+        }
+        .re-detail-title {
+            font-size: 20px;
+            font-weight: bold;
+            font-family: "DYmingA", serif;
+        }
+        .re-detail-title.house { color: #713F12; }
+        .re-detail-title.special { color: #1E3A8A; }
+        .re-loc-row {
+            margin-top: 8px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .re-loc-row.house { color: #57534E; font-weight: bold; }
+        .re-loc-row.special { color: #334155; }
+
+        .re-section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1C1917;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .re-section-title.house-activity {
+            font-size: 15px;
+            color: #991B1B;
+        }
+
+        .re-box {
+            background: rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.15);
+            padding: 12px;
+            border-radius: 2px;
+            font-size: 13px;
+            color: #292524;
+            line-height: 1.6;
+        }
+        .re-box.special-min { min-height: 180px; }
+        .re-box-line {
+            height: 1px;
+            border-bottom: 1px dashed rgba(0,0,0,0.2);
+            margin: 10px 0;
+        }
+
+        .re-activity-box {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.05"/></svg>'), rgba(255,255,255,0.4);
+            border: 1px solid rgba(153, 27, 27, 0.3);
+            padding: 12px 16px;
+            border-left: 3px solid #991B1B;
+            position: relative;
+            color: #0C0A09;
+            font-family: "XiangcuiDengcusong", "DYmingA", serif !important;
+            font-size: 16px !important;
+            font-weight: bold;
+            line-height: 1.7;
+        }
+        .re-breath-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10B981;
+            box-shadow: 0 0 4px #10B981;
+            animation: breathDot 2s infinite;
+        }
+        @keyframes breathDot {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        
+        .detail-text, .re-box, .cabin-row {
+            font-family: "XiangcuiDengcusong", "DYmingA", serif !important;
+            font-weight: bold !important;
+            font-size: 16px !important;
+            color: #1c1917 !important;
+            line-height: 1.8 !important;
+        }
+        .re-box.special-min {
+            min-height: 250px !important;
+            font-size: 18px !important;
+            line-height: 2.2 !important;
+        }
+        .cabin-row span, .re-box span {
+            font-size: 17px !important;
+        }
+
+        /* 技能区块 */
+        .skill-color-E { color: #718096 !important; }
+        .skill-color-D { color: #48BB78 !important; }
+        .skill-color-C { color: #4299E1 !important; }
+        .skill-color-B { color: #9F7AEA !important; }
+        .skill-color-A { color: #ECC94B !important; }
+        .skill-color-S { color: #E53E3E !important; text-shadow: 0 0 5px rgba(229,62,62,0.4); }
+
+        .skill-border-E { border-color: #718096 !important; }
+        .skill-border-D { border-color: #48BB78 !important; }
+        .skill-border-C { border-color: #4299E1 !important; }
+        .skill-border-B { border-color: #9F7AEA !important; }
+        .skill-border-A { border-color: #ECC94B !important; }
+        .skill-border-S { border-color: #E53E3E !important; box-shadow: inset 0 0 8px rgba(229,62,62,0.1), 0 0 4px rgba(229,62,62,0.2) !important; }
+
+        .skill-bg-E { background-color: rgba(113,128,150,0.1) !important; }
+        .skill-bg-D { background-color: rgba(72,187,120,0.1) !important; }
+        .skill-bg-C { background-color: rgba(66,153,225,0.1) !important; }
+        .skill-bg-B { background-color: rgba(159,122,234,0.1) !important; }
+        .skill-bg-A { background-color: rgba(236,201,75,0.1) !important; }
+        .skill-bg-S { background-color: rgba(229,62,62,0.1) !important; }
+
+        .prof-color-入门 { color: #A0AEC0 !important; }
+        .prof-color-熟练 { color: #63B3ED !important; }
+        .prof-color-精通 { color: #D69E2E !important; }
+
+        .prof-bg-入门 { background: #A0AEC0 !important; }
+        .prof-bg-熟练 { background: #63B3ED !important; box-shadow: 0 0 8px #63B3ED; }
+        .prof-bg-精通 { background: #D69E2E !important; box-shadow: 0 0 10px #D69E2E; }
+
+        
+    \n        
+        /* 社交区块 Phase 6.1 */
+        /* removed social-tab specific colors so they inherit from movable-tab */
+
+        .social-list-item {
+            padding: 10px 12px;
+            margin: 6px 10px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .social-list-item.active {
+            background: rgba(255,255,255,0.8);
+            border-left: 4px solid #C0392B;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .social-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1C1917;
+            font-family: "XiangcuiDengcusong", "DYmingA", serif !important;
+        }
+        .social-age {
+            font-size: 12px;
+            color: #7F8C8D;
+        }
+
+        .social-glass {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .social-wood-sign {
+            background: linear-gradient(145deg, #4A3B2C, #2E2218);
+            color: #FDF2E9;
+            padding: 6px 20px;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid #1C1917;
+            font-family: "DYmingA", serif;
+            text-align: center;
+            width: 100%;
+        }
+
+        .social-kv-row {
+            display: flex;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        .social-kv-key {
+            color: #7F8C8D;
+            width: 70px;
+            flex-shrink: 0;
+        }
+        .social-kv-val {
+            color: #2C3E50;
+            font-weight: bold;
+        }
+
+        .social-bar-container {
+            width: 100%;
+            height: 12px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 4px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .social-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .social-note {
+            background: #FFF9C4;
+            padding: 12px;
+            border-radius: 2px 2px 12px 2px;
+            font-style: italic;
+            font-size: 13px;
+            color: #2C3E50;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .social-note::after {
+            content: '';
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 0; height: 0;
+            border-style: solid;
+            border-width: 0 0 12px 12px;
+            border-color: transparent transparent rgba(0,0,0,0.1) transparent;
+        }
+
+        .social-trait-box {
+            border: 1px solid rgba(0,0,0,0.15);
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.5);
+            font-size: 13px;
+            color: #2C3E50;
+        }
+
+        .social-seal {
+            width: 32px;
+            height: 32px;
+            border: 2px solid #C0392B;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(192,57,43,0.05);
+            box-shadow: inset 0 0 4px rgba(192,57,43,0.1);
+            color: #C0392B;
+        }
+        .social-seal-title {
+            font-size: 10px;
+            line-height: 1;
+        }
+        .social-seal-val {
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 1;
+            font-family: monospace;
+        }
+
+        .social-blockquote {
+            border-left: 3px solid #C0392B;
+            background: rgba(255,255,255,0.5);
+            padding: 8px 12px;
+            margin: 4px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 12px;
+        }
+
+        .social-nsfw-btn {
+            background: #2C3E50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .social-nsfw-btn:hover {
+            background: #e74c3c;
+            transform: translateY(-1px);
+        }
+
+        .social-nsfw-panel {
+            display: none;
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(0,0,0,0.8);
+            color: #ecf0f1;
+            border-radius: 8px;
+            border-left: 4px solid #9b59b6;
+            width: 100%;
+        }
+
+        
+        .social-portrait-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.5);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            width: 100%;
+            flex-shrink: 0;
+            aspect-ratio: 4 / 5;
+            background-position: center top !important;
+            background-size: cover !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 12px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .social-portrait-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+            border-color: rgba(255,255,255,0.8);
+        }
+        .social-shine {
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(105deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 60%, rgba(255,255,255,0) 100%);
+            transform: translateX(-150%);
+            pointer-events: none;
+            z-index: 10;
+        }
+        .social-portrait-container:hover .social-shine {
+            animation: shineSweep 1.5s ease-in-out infinite;
+        }
+        @keyframes shineSweep {
+            0% { transform: translateX(-150%); }
+            100% { transform: translateX(150%); }
+        }
+    
+        
+        .social-list-item:hover, .skill-list-item:hover, .re-list-item:hover, .movable-list-item:hover {
+            transform: translateX(4px);
+            background: rgba(255,255,255,0.7);
+            box-shadow: -2px 2px 6px rgba(0,0,0,0.1);
+        }
+    
+        
+        .other-panel {
+            font-size: 1.1rem;
+        }
+        .social-glass {
+            padding: 20px !important;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+        }
+        .social-kv-row {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .social-name {
+            font-size: 16px;
+        }
+        .social-list-item {
+            padding: 12px 14px;
+            margin: 8px 12px;
+        }
+        .re-box {
+            font-size: 18px !important;
+            padding: 20px;
+        }
+        .social-note {
+            font-size: 15px;
+            padding: 16px;
+        }
+    
+        /* Tasks List Items Style */
+        .task-list-item {
+            padding: 10px 12px;
+            margin: 6px 10px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.4);
+        }
+        .task-list-item.active {
+            background: rgba(255,255,255,0.8);
+            border-left: 4px solid #b23a2a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .task-list-item:hover {
+            transform: translateX(4px);
+            background: rgba(255,255,255,0.7);
+            box-shadow: -2px 2px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Organization Stamp and List Items Style */
+        .org-list-item {
+            padding: 10px 12px;
+            margin: 6px 10px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.4);
+        }
+        .org-list-item.active {
+            background: rgba(255,255,255,0.8);
+            border-left: 4px solid #8B5A2B;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .org-list-item:hover {
+            transform: translateX(4px);
+            background: rgba(255,255,255,0.7);
+            box-shadow: -2px 2px 6px rgba(0,0,0,0.1);
+        }
+        .org-stamp {
+            border: 3px double;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 24px;
+            font-weight: 900;
+            text-align: center;
+            display: inline-block;
+            transform: rotate(-12deg);
+            font-family: "DYmingA", serif;
+            opacity: 0.8;
+            text-shadow: none;
+        }
+        .stamp-high { color: #B23A2A; border-color: #B23A2A; }
+        .stamp-med { color: #3182CE; border-color: #3182CE; }
+        .stamp-low { color: #718096; border-color: #718096; }
+
+        /* Other panels */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+        }
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(74, 64, 54, 0.2);
+            padding-bottom: 6px;
+            font-size: 16px;
+        }
+        .data-label {
+            font-weight: bold;
+            color: #111;
+        }
+        .data-value {
+            color: #1a1a1a;
+        }
+        .other-panel {
+            width: 100%;
+            display: block !important;
+            padding: 20px;
+        }
+        .content-area.other-panel.active { display: block !important; }
+        .content-area:not(.active) { display: none !important; }
+
+        /* Demon Card Pulse Red */
+        .plaque-btn[data-target="panel-cards"] {
+            background: linear-gradient(to bottom, #4a1212, #210404) !important;
+            border-color: #5a0c0c !important;
+            color: #ff9999 !important;
+            box-shadow: 0 0 5px rgba(255, 0, 0, 0.4);
+            animation: demonPulse 1.8s infinite alternate !important;
+        }
+        @keyframes demonPulse {
+            0% {
+                box-shadow: 0 0 3px rgba(255, 0, 0, 0.3);
+                text-shadow: 0 0 3px rgba(255, 0, 0, 0.3);
+                color: #ff7777;
+            }
+            100% {
+                box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+                text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+                color: #ff3333;
+                background: linear-gradient(to bottom, #601212, #300404) !important;
+            }
+        }
+
+        .demon-color-石级 { color: #8A7B72 !important; text-shadow: 0 0 5px rgba(138,123,114,0.4); }
+        .demon-color-铜级 { color: #7A9A82 !important; text-shadow: 0 0 5px rgba(122,154,130,0.4); }
+        .demon-color-银级 { color: #5C829E !important; text-shadow: 0 0 5px rgba(92,130,158,0.4); }
+        .demon-color-金级 { color: #D4AF37 !important; text-shadow: 0 0 8px rgba(212,175,55,0.6); }
+
+        .demon-border-石级 { border-color: #8A7B72 !important; box-shadow: inset 0 0 10px rgba(138,123,114,0.2), 0 0 5px rgba(138,123,114,0.3) !important; }
+        .demon-border-铜级 { border-color: #7A9A82 !important; box-shadow: inset 0 0 10px rgba(122,154,130,0.2), 0 0 5px rgba(122,154,130,0.3) !important; }
+        .demon-border-银级 { border-color: #5C829E !important; box-shadow: inset 0 0 10px rgba(92,130,158,0.2), 0 0 5px rgba(92,130,158,0.3) !important; }
+        .demon-border-金级 { border-color: #D4AF37 !important; box-shadow: inset 0 0 15px rgba(212,175,55,0.3), 0 0 10px rgba(212,175,55,0.5) !important; }
+
+        @keyframes demonDeadPulse {
+            0% { opacity: 0.7; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-scroll">
+        <div class="world-status left">
+            <div class="world-time-wrapper">
+                <span id="world-time" class="header-text">加载中...</span>
+            </div>
+            <div id="world-weather" class="header-subtext">加载中...</div>
+        </div>
+        <div class="logo-center">
+            <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEaPKxqlcEcwnIm7BHgnJcWdXH1NW5COgAClSEAAslVsVRH6QKl7blRcD0E.png" alt="Konoha Logo" />
+        </div>
+        <div class="world-status right">
+            <div id="world-location" class="header-text">加载中...</div>
+            <div id="world-main-quest" class="header-subtext">加载中...</div>
+        </div>
+    </div>
+
+    <div class="plaque-container">
+        <div class="plaque-btn active" data-target="panel-main">主角数据</div>
+        <div class="plaque-btn" data-target="panel-movable">动产</div>
+        <div class="plaque-btn" data-target="panel-realestate">不动产</div>
+        <div class="plaque-btn" data-target="panel-skills">技能</div>
+        <div class="plaque-btn" data-target="panel-social">社交</div>
+        <div class="plaque-btn" data-target="panel-org">组织</div>
+        <div class="plaque-btn" data-target="panel-tasks">任务</div>
+        <div class="plaque-btn" data-target="panel-cards">恶魔卡系统</div>
+    </div>
+
+    <div id="panel-main" class="content-area active" style="flex-direction: row;">
+        <!-- Left Column -->
+        <div class="main-col-left">
+            <div class="avatar-container">
+                <img id="avatar-img" src="" alt="">
+                <div class="avatar-inner-frame"></div>
+                <div class="avatar-upload-btn" id="btn-upload-avatar">上传立绘</div>
+            </div>
+            <div class="name-row">
+                <div class="name-text" id="char-name">未知</div>
+                <div class="age-text">年龄 <span id="char-age">12</span></div>
+            </div>
+            <div class="level-exp-row">
+                <div class="level-badge" id="char-level">Lv.1</div>
+                <div class="exp-bar-container">
+                    <div class="exp-bar-fill" id="char-exp-bar" style="width:0%"></div>
+                </div>
+                <div class="exp-text" id="char-exp-text">0/100</div>
+            </div>
+        </div>
+
+        <!-- Center Column -->
+        <div class="main-col-center">
+            <!-- HP -->
+            <div class="status-row status-hp">
+                <svg class="status-icon" viewBox="0 0 24 24"><path d="M19.5 8.5c-2 0-3.12 1.35-3.8 2.53l-1.92-3.83A1 1 0 0013 6.78l-3.23 8.08-1.57-4.72a1 1 0 00-1.9 0l-1.8 5.4H2v2h3.38l1.04-3.13 1.76 5.29a1 1 0 001.9-.06l3.14-7.85 2 4A1 1 0 0016 16.5h6v-2h-5.06l-1.07-1.8c.45-.88 1.14-2.2 3.63-2.2z"/></svg>
+                <div class="status-bar-container">
+                    <div class="status-bar-fill" id="bar-hp" style="width:100%"></div>
+                </div>
+                <div class="status-text" id="text-hp">100%</div>
+            </div>
+            <!-- Chakra -->
+            <div class="status-row status-chakra">
+                <svg class="status-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm0-14a4 4 0 000 8 2 2 0 110 4 6 6 0 110-12zm0 6a2 2 0 100-4 2 2 0 000 4z"/></svg>
+                <div class="status-bar-container">
+                    <div class="status-bar-fill" id="bar-chakra" style="width:100%"></div>
+                </div>
+                <div class="status-text" id="text-chakra">100/100</div>
+            </div>
+            <!-- Mind -->
+            <div class="status-row status-mind">
+                <svg class="status-icon" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                <div class="status-bar-container">
+                    <div class="status-bar-fill" id="bar-mind" style="width:100%"></div>
+                </div>
+                <div class="status-text" id="text-mind">100%</div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-header">
+                <div class="stats-title">八维属性</div>
+                <div class="stats-points" id="stats-ap">可用属性点: 0</div>
+            </div>
+            <div class="stats-grid" id="stats-grid">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="main-col-right">
+            <div class="right-section">
+                <div class="right-title">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    身份
+                </div>
+                <div id="char-identity-container"></div>
+            </div>
+
+            <div class="right-section">
+                <div class="right-title">
+                    <svg viewBox="0 0 24 24"><path d="M2.54 18.23l2.83 2.83 15.55-15.56-2.83-2.83L2.54 18.23zm4.24 1.42L3.95 16.82l12.73-12.73 2.83 2.83L6.78 19.65z"/><path d="M8.49 11.31l1.41-1.41 2.83 2.83-1.41 1.41zM11.31 8.49l1.41-1.41 2.83 2.83-1.41 1.41z"/></svg>
+                    身体永久损伤
+                </div>
+                <div class="damage-box" id="char-damage">无</div>
+            </div>
+
+            <div class="right-section">
+                <div class="right-title">
+                    <svg viewBox="0 0 24 24"><path d="M12 3L4 9v12h16V9l-8-6zm0 2.5l5 3.75V10h-2v9H9v-9H7V9.25l5-3.75z"/></svg>
+                    着装
+                </div>
+                <div class="desc-text" id="char-outfit">[外套] + [内搭] + [下装] + [足具] + [配饰]</div>
+            </div>
+
+            <div class="separator-line"></div>
+
+            <div class="right-section">
+                <div class="right-title">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+                    下体状态
+                </div>
+                <div class="desc-text" id="char-lower">正常</div>
+            </div>
+
+            <div class="right-section">
+                <div class="right-title">
+                    <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>
+                    射精进度
+                </div>
+                <div class="ejac-row">
+                    <div class="ejac-bar-container">
+                        <div class="ejac-bar-fill" id="char-ejac-bar" style="width:0%"></div>
+                    </div>
+                    <div class="ejac-text" id="char-ejac-text">0%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other panels -->
+    <div id="panel-movable" class="content-area other-panel">
+        <div class="movable-header">
+            <div class="movable-tabs" id="movable-tabs">
+                <div class="movable-tab active" data-cat="核心道具">核心道具</div>
+                <div class="movable-tab" data-cat="装备">装备</div>
+                <div class="movable-tab" data-cat="道具">道具</div>
+                <div class="movable-tab" data-cat="消耗品">消耗品</div>
+                <div class="movable-tab" data-cat="仓储物">仓储物</div>
+            </div>
+            <div class="movable-money">
+                <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:#d69e2e;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-3-9h6v2H9v-2z"/></svg>
+                <span class="money-label">金钱:</span>
+                <span class="money-value" id="val-money">0</span>
+            </div>
+        </div>
+        <div class="movable-body">
+            <div class="movable-list" id="movable-list">
+                <!-- 动态生成 -->
+            </div>
+            <div class="movable-detail" id="movable-detail">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 不动产区块 Phase 4 -->
+    <div id="panel-realestate" class="content-area other-panel">
+        <div class="movable-header">
+            <div class="movable-tabs" id="re-tabs">
+                <div class="movable-tab re-tab active" data-cat="住宅">住宅</div>
+                <div class="movable-tab re-tab" data-cat="特殊地点">特殊地点</div>
+            </div>
+        </div>
+        <div class="movable-body">
+            <div class="movable-list" id="re-list">
+                <!-- 动态生成 -->
+            </div>
+            <div class="movable-detail" id="re-detail">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+    </div>
+    <div id="panel-skills" class="content-area other-panel" style="padding:0 !important; display:flex; flex-direction:column; height:100%; background:transparent;">
+        <div class="movable-header">
+            <div class="movable-tabs" id="skill-tabs">
+                <div class="movable-tab skill-tab active" data-cat="忍术">忍术</div>
+                <div class="movable-tab skill-tab" data-cat="战技">战技</div>
+                <div class="movable-tab skill-tab" data-cat="幻术">幻术</div>
+                <div class="movable-tab skill-tab" data-cat="被动技能">被动技能</div>
+                <div class="movable-tab skill-tab" data-cat="特殊技能">特殊技能</div>
+                <div class="movable-tab skill-tab" data-cat="玩家积累">玩家积累</div>
+            </div>
+        </div>
+        <div class="movable-body">
+            <div class="movable-list" id="skill-list" style="flex: 0 0 35%;"></div>
+            <div class="movable-detail" id="skill-detail" style="flex: 1; padding: 20px; display:flex; flex-direction:column; gap:20px;"></div>
+        </div>
+    </div>
+    <div id="panel-social" class="content-area other-panel" style="padding:0 !important; display:flex; flex-direction:column; height:100%; background:transparent;">
+        <div class="movable-header">
+            <div class="movable-tabs" id="social-tabs">
+                <div class="movable-tab active" data-cat="在场">在场</div>
+                <div class="movable-tab" data-cat="离场">离场</div>
+                <div class="movable-tab" data-cat="死亡角色">死亡角色</div>
+            </div>
+        </div>
+        <div class="movable-body" style="align-items: stretch;">
+            <div class="movable-list" id="social-list" style="flex: 0 0 16%; background:rgba(255,255,255,0.2); border-right: 1px dashed rgba(0,0,0,0.15); min-height: 100%; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; padding-bottom: 20px;"></div>
+            <div class="movable-detail" id="social-detail" style="flex: 1; padding: 20px; overflow-y: auto; height: 100%;"></div>
+        </div>
+    </div>
+    
+    <div id="panel-org" class="content-area other-panel" style="padding:0 !important; display:flex; flex-direction:column; height:100%; background:transparent;">
+        <div class="movable-header">
+            <div class="movable-tabs" id="org-tabs">
+                <div class="movable-tab active" data-cat="据点">据点</div>
+                <div class="movable-tab" data-cat="干部">干部</div>
+                <div class="movable-tab" data-cat="部队">部队</div>
+                <div class="movable-tab" data-cat="配置">配置</div>
+                <div class="movable-tab" data-cat="计划">计划</div>
+                <div class="movable-tab" data-cat="资源">资源</div>
+            </div>
+        </div>
+        <div class="movable-body" style="align-items: stretch;">
+            <div class="movable-list" id="org-list" style="flex: 0 0 25%; background:rgba(255,255,255,0.2); border-right: 1px dashed rgba(0,0,0,0.15); min-height: 100%; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; padding-bottom: 20px;"></div>
+            <div class="movable-detail" id="org-detail" style="flex: 1; padding: 20px; overflow-y: auto; height: 100%;"></div>
+        </div>
+    </div>
+    
+    <div id="panel-tasks" class="content-area other-panel" style="padding:0 !important; display:flex; flex-direction:column; height:100%; background:transparent;">
+        <div class="movable-header">
+            <div class="movable-tabs" id="task-tabs">
+                <div class="movable-tab active" data-cat="个人修炼">个人修炼</div>
+                <div class="movable-tab" data-cat="个人事项">个人事项</div>
+                <div class="movable-tab" data-cat="长期任务">长期任务</div>
+                <div class="movable-tab" data-cat="短期任务">短期任务</div>
+                <div class="movable-tab" data-cat="循环事件">循环事件</div>
+            </div>
+        </div>
+        <div class="movable-body" style="align-items: stretch;">
+            <div class="movable-list" id="task-list" style="flex: 0 0 25%; background:rgba(255,255,255,0.2); border-right: 1px dashed rgba(0,0,0,0.15); min-height: 100%; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; padding-bottom: 20px;"></div>
+            <div class="movable-detail" id="task-detail" style="flex: 1; padding: 20px; overflow-y: auto; height: 100%;"></div>
+        </div>
+    </div>
+    <div id="panel-cards" class="content-area other-panel" style="background: radial-gradient(circle, #250505 0%, #0a0101 100%) !important; border: 2px solid #5a0c0c !important; box-shadow: 0 0 25px rgba(120, 0, 0, 0.6) !important; padding: 20px !important;"></div>
+
+    <script>
+        $(errorCatched(async () => {
+            await waitGlobalInitialized('Mvu');
+
+            /* Accordion logic */
+            $('.plaque-btn').on('click', function() {
+                $('.plaque-btn').removeClass('active');
+                $(this).addClass('active');
+                $('.content-area').removeClass('active');
+                $('#' + $(this).data('target')).addClass('active');
+            });
+
+            /* Upload Avatar logic */
+            $('#btn-upload-avatar').on('click', function() {
+                const newUrl = prompt("请输入新立绘的图片URL：");
+                if (newUrl !== null) {
+                    try {
+                        Mvu.setMvuVariable('stat_data.主角数据.头像立绘', newUrl);
+                    } catch(e) {
+                        console.error('Update avatar failed:', e);
+                    }
+                }
+            });
+
+            /* Bind attributes increase/decrease */
+            const keys = ['忍','体','幻','智','力','速','精','印'];
+            const attrPaths = {};
+            keys.forEach(k => {
+                attrPaths[k] = `stat_data.主角数据.八维属性.加点分配.${k}`;
+            });
+
+            $(document).on('click', '.stat-btn.add', function() {
+                const k = $(this).data('key');
+                const vars = getAllVariables();
+                const apPath = 'stat_data.主角数据.八维属性.可用属性点';
+                let ap = _.get(vars, apPath, 0);
+                if (ap > 0) {
+                    let val = _.get(vars, attrPaths[k], 1);
+                    if (val < 20) {
+                        try {
+                            // Batch update
+                            let parentPath = 'stat_data.主角数据.八维属性';
+                            let parentObj = _.cloneDeep(_.get(vars, parentPath, {}));
+                            parentObj.可用属性点 = ap - 1;
+                            if(!parentObj.加点分配) parentObj.加点分配 = {};
+                            parentObj.加点分配[k] = val + 1;
+                            Mvu.setMvuVariable(parentPath, parentObj);
+                        } catch(e){}
+                    }
+                }
+            });
+
+            $(document).on('click', '.stat-btn.sub', function() {
+                const k = $(this).data('key');
+                const vars = getAllVariables();
+                const apPath = 'stat_data.主角数据.八维属性.可用属性点';
+                let ap = _.get(vars, apPath, 0);
+                let val = _.get(vars, attrPaths[k], 1);
+                if (val > 0) {
+                    try {
+                        let parentPath = 'stat_data.主角数据.八维属性';
+                            let parentObj = _.cloneDeep(_.get(vars, parentPath, {}));
+                            parentObj.可用属性点 = ap + 1;
+                            if(!parentObj.加点分配) parentObj.加点分配 = {};
+                            parentObj.加点分配[k] = val - 1;
+                            Mvu.setMvuVariable(parentPath, parentObj);
+                    } catch(e){}
+                }
+            });
+
+            const renderMain = (vars) => {
+                /* Header data (no prefixes) */
+                $('#world-time').text(_.get(vars, 'stat_data.世界运行情况.世界时间', 'YY年M月D日 HH:MM/星期'));
+                $('#world-weather').text(_.get(vars, 'stat_data.世界运行情况.当前天气', '晴/25℃'));
+                $('#world-location').text(_.get(vars, 'stat_data.世界运行情况.当前位置', '火之国·木叶隐村'));
+                $('#world-main-quest').text(_.get(vars, 'stat_data.世界运行情况.当前世界主线', '待初始化'));
+
+                /* Left Column */
+                const avatar = _.get(vars, 'stat_data.主角数据.头像立绘', '');
+                if (avatar) {
+                    $('#avatar-img').attr('src', avatar).css('opacity', 1);
+                } else {
+                    $('#avatar-img').css('opacity', 0);
+                }
+
+                $('#char-name').text(_.get(vars, 'stat_data.主角数据.名称', '未知'));
+                $('#char-age').text(_.get(vars, 'stat_data.主角数据.年龄', 12));
+                $('#char-level').text('Lv.' + _.get(vars, 'stat_data.主角数据.等级', 1));
+
+                const expStr = _.get(vars, 'stat_data.主角数据.经验', '0/100');
+                $('#char-exp-text').text(expStr);
+                const expParts = expStr.split('/');
+                let expPct = 0;
+                if (expParts.length === 2 && parseFloat(expParts[1]) > 0) {
+                    expPct = (parseFloat(expParts[0]) / parseFloat(expParts[1])) * 100;
+                    expPct = Math.min(Math.max(expPct, 0), 100);
+                }
+                $('#char-exp-bar').css('width', expPct + '%');
+
+                /* Center Column */
+                const hp = _.get(vars, 'stat_data.主角数据.状态.体力', 100);
+                $('#bar-hp').css('width', hp + '%');
+                $('#text-hp').text(hp + '%');
+
+                const chakra = _.get(vars, 'stat_data.主角数据.状态.查克拉量', '100/100');
+                $('#text-chakra').text(chakra);
+                let chakraPct = 0;
+                const chkParts = chakra.split('/');
+                if (chkParts.length === 2 && parseFloat(chkParts[1]) > 0) {
+                    chakraPct = (parseFloat(chkParts[0]) / parseFloat(chkParts[1])) * 100;
+                    chakraPct = Math.min(Math.max(chakraPct, 0), 100);
+                }
+                $('#bar-chakra').css('width', chakraPct + '%');
+
+                const mind = _.get(vars, 'stat_data.主角数据.状态.精神状态', 100);
+                $('#bar-mind').css('width', mind + '%');
+                $('#text-mind').text(mind + '%');
+
+                const ap = _.get(vars, 'stat_data.主角数据.八维属性.可用属性点', 0);
+                const $apNode = $('#stats-ap');
+                $apNode.text('可用属性点: ' + ap);
+                if (ap > 0) {
+                    $apNode.addClass('active');
+                } else {
+                    $apNode.removeClass('active');
+                }
+
+                let statsHtml = '';
+                keys.forEach(k => {
+                    const val = _.get(vars, attrPaths[k], 1);
+                    const btnAdd = ap > 0 ? '' : 'disabled';
+                    const btnSub = val > 0 ? '' : 'disabled';
+                    statsHtml += '<div class="stat-box">';
+                    statsHtml += '<div class="stat-kanji">' + k + '</div>';
+                    statsHtml += '<div class="stat-num">' + val + '</div>';
+                    statsHtml += '<div class="stat-controls">';
+                    statsHtml += '<button class="stat-btn sub" data-key="' + k + '" ' + btnSub + '>-</button>';
+                    statsHtml += '<button class="stat-btn add" data-key="' + k + '" ' + btnAdd + '>+</button>';
+                    statsHtml += '</div></div>';
+                });
+                $('#stats-grid').html(statsHtml);
+
+                /* Right Column */
+                const identity = _.get(vars, 'stat_data.主角数据.身份', '平民');
+                let idHtml = '';
+                identity.split('/').forEach(id => {
+                    idHtml += '<div class="identity-tag" style="margin-right:8px; margin-bottom:8px;">' + id + '</div>';
+                });
+                $('#char-identity-container').html(idHtml);
+
+                $('#char-damage').text(_.get(vars, 'stat_data.主角数据.身体永久损伤', '无'));
+                $('#char-outfit').text(_.get(vars, 'stat_data.主角数据.着装', '[外套] + [内搭] + [下装] + [足具] + [配饰]'));
+                $('#char-lower').text(_.get(vars, 'stat_data.主角数据.下体状态', '正常'));
+
+                const ejac = _.get(vars, 'stat_data.主角数据.射精进度', 0);
+                $('#char-ejac-bar').css('width', ejac + '%');
+                $('#char-ejac-text').text(ejac + '%');
+            };
+
+            /* 动产部分逻辑 Phase 3 */
+            let currentMovableTab = '核心道具';
+            let currentSelectedItem = null;
+
+            $('#movable-tabs').on('click', '.movable-tab', function() {
+                $('.movable-tab').removeClass('active');
+                $(this).addClass('active');
+                currentMovableTab = $(this).data('cat');
+                currentSelectedItem = null;
+                renderMovablePanel(getAllVariables());
+            });
+
+            $('#movable-list').on('click', '.movable-list-item', function() {
+                $('.movable-list-item').removeClass('active');
+                $(this).addClass('active');
+                currentSelectedItem = $(this).data('id');
+                renderMovableDetail(getAllVariables());
+            });
+
+            const renderMovablePanel = (vars) => {
+                const money = _.get(vars, 'stat_data.动产.金钱', 0);
+                $('#val-money').text(money);
+
+                const itemsObj = _.get(vars, `stat_data.动产.${currentMovableTab}`, {});
+                const itemKeys = Object.keys(itemsObj);
+
+                if (itemKeys.length === 0) {
+                    $('#movable-list').html('<div style="padding:20px;text-align:center;color:#888;">暂无条目</div>');
+                    $('#movable-detail').html('');
+                    return;
+                }
+
+                if (!currentSelectedItem || !itemsObj[currentSelectedItem]) {
+                    currentSelectedItem = itemKeys[0];
+                }
+
+                let listHtml = '';
+                itemKeys.forEach(k => {
+                    const item = itemsObj[k];
+                    const isActive = (k === currentSelectedItem) ? 'active' : '';
+                    let r1Left = k, r1Right = 'x' + (item.数量 || 1);
+                    let r2Html = '';
+
+                    const rarity = item.珍稀程度 || '普通';
+                    const qualityColorClass = 'color-' + rarity;
+
+                    if (currentMovableTab === '核心道具') {
+                        r1Left = `<span class="m-item-title color-核心">${k}</span>`;
+                        let imp = item.重要程度 || '核心';
+                        r2Html = `<span class="m-item-badge core">[${imp}]</span>`;
+                    } else if (currentMovableTab === '装备') {
+                        r1Left = `<span class="m-item-title ${qualityColorClass}">${k}</span>`;
+                        let worn = item.是否穿戴 === '是';
+                        let wornClass = worn ? 'worn' : 'unworn';
+                        let wornText = worn ? '已穿戴' : '未穿戴';
+                        r2Html = `<span class="m-item-badge">[${rarity}]</span> <span class="m-item-badge ${wornClass}">[${wornText}]</span>`;
+                    } else if (currentMovableTab === '道具') {
+                        r1Left = `<span class="m-item-title ${qualityColorClass}">${k}</span>`;
+                        r2Html = `<span class="m-item-badge">[${rarity}]</span>`;
+                    } else if (currentMovableTab === '消耗品') {
+                        r1Left = `<span class="m-item-title">${k}</span>`;
+                    } else if (currentMovableTab === '仓储物') {
+                        r1Left = `<span class="m-item-title">${k}</span>`;
+                        r2Html = `<span class="m-item-badge" style="border-color:#8b4513;color:#8b4513;">[原:${item.动产类型 || '未知'}]</span>`;
+                    }
+
+                    listHtml += `
+                        <div class="movable-list-item ${isActive}" data-id="${k}">
+                            <div class="movable-list-item-row">
+                                ${r1Left}
+                                <span class="m-item-qty">${r1Right}</span>
+                            </div>
+                            ${r2Html ? `<div class="movable-list-item-row" style="justify-content:flex-start;gap:6px;">${r2Html}</div>` : ''}
+                        </div>
+                    `;
+                });
+
+                $('#movable-list').html(listHtml);
+                renderMovableDetail(vars);
+            };
+
+            const renderMovableDetail = (vars) => {
+                if (!currentSelectedItem) {
+                    $('#movable-detail').html('');
+                    return;
+                }
+                const item = _.get(vars, `stat_data.动产.${currentMovableTab}.${currentSelectedItem}`, {});
+                let detailHtml = '';
+
+                const rarity = item.珍稀程度 || '普通';
+                const qualityGradClass = 'grad-' + rarity;
+                const titleColorClass = currentMovableTab === '核心道具' ? 'color-核心' : (item.珍稀程度 ? `color-${rarity}` : '');
+
+                let headerBadges = '';
+                headerBadges += `<div class="detail-badge-box">[${currentMovableTab}]</div>`;
+                if (currentMovableTab === '核心道具') {
+                    headerBadges += `<div class="detail-badge-box">[重要程度: ${item.重要程度 || '核心'}]</div>`;
+                } else if (item.珍稀程度) {
+                    headerBadges += `<div class="detail-badge-box">[珍稀程度: ${rarity}]</div>`;
+                }
+                if (currentMovableTab === '仓储物') {
+                    headerBadges += `<div class="detail-badge-box">[原类型: ${item.动产类型 || '未知'}]</div>`;
+                }
+                headerBadges += `<div class="detail-badge-box">[数量: x${item.数量 || 1}]</div>`;
+                if (item.是否穿戴) {
+                    headerBadges += `<div class="detail-badge-box">[${item.是否穿戴 === '是' ? '已穿戴' : '未穿戴'}]</div>`;
+                }
+
+                detailHtml += `
+                    <div class="detail-header ${qualityGradClass}">
+                        <div class="detail-title ${titleColorClass}" style="font-size:20px;">${currentSelectedItem}</div>
+                        <div class="detail-badges">${headerBadges}</div>
+                    </div>
+                `;
+
+                if (currentMovableTab === '仓储物') {
+                    let hidden = item.隐秘性 || '0%';
+                    let hiddenNum = parseFloat(hidden) || 0;
+                    let barColor = hiddenNum > 50 ? '#4a7c59' : '#b23a2a';
+                    detailHtml += `
+                        <div class="detail-section-title">储藏档案与隐秘性</div>
+                        <div class="detail-box-container" style="display:flex;flex-direction:column;gap:10px;">
+                            <div>
+                                <span style="font-weight:bold;">储藏地点:</span>
+                                <span style="margin-left:8px;font-family:'DYmingA',serif;font-size:14px;">${item.储藏地点 || '未知'}</span>
+                            </div>
+                            <div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-weight:bold;">隐秘性:</span>
+                                    <span style="font-family:monospace;font-size:18px;font-weight:bold;color:${barColor};">${hidden}</span>
+                                </div>
+                                <div class="hide-progress-bar">
+                                    <div class="hide-progress-fill" style="width:${hiddenNum}%;background:${barColor};"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    let descTitle = currentMovableTab === '消耗品' ? '效用与用途' : '用途描述';
+                    detailHtml += `
+                        <div class="detail-section-title">${descTitle}</div>
+                        <div class="detail-box-container" style="${currentMovableTab === '消耗品' ? 'min-height:120px;' : ''}">
+                            <div class="detail-text">${item.用途描述 || '无'}</div>
+                        </div>
+                    `;
+                }
+
+                /* Bottom Cabin */
+                if (currentMovableTab !== '消耗品') {
+                    detailHtml += `<div class="detail-bottom-cabin">`;
+                    if (item.当前状态) {
+                        detailHtml += `<div class="cabin-row"><span style="font-weight:bold;color:#1c1917;">当前状态:</span> ${item.当前状态}</div>`;
+                    }
+                    if (item.获得途径及时间) {
+                        detailHtml += `<div class="cabin-row"><span style="font-weight:bold;color:#1c1917;">获得途径及时间:</span> ${item.获得途径及时间}</div>`;
+                    }
+                    detailHtml += `</div>`;
+                } else {
+                    detailHtml += `<div class="cabin-row" style="text-align:center;background:transparent;border:none;font-weight:bold;color:#1c1917;">※ 消耗类物资无状态与来源档案</div>`;
+                }
+
+                $('#movable-detail').html(detailHtml);
+            };
+
+            /* 不动产部分逻辑 Phase 4 */
+            let currentReTab = '住宅';
+            let currentReItem = null;
+
+            $('#re-tabs').on('click', '.re-tab', function() {
+                $('.re-tab').removeClass('active');
+                $(this).addClass('active');
+                currentReTab = $(this).data('cat');
+                currentReItem = null;
+                renderRePanel(getAllVariables());
+            });
+
+            $('#re-list').on('click', '.re-list-item', function() {
+                $('.re-list-item').removeClass('active');
+                $(this).addClass('active');
+                currentReItem = $(this).data('id');
+                renderReDetail(getAllVariables());
+            });
+
+            const renderRePanel = (vars) => {
+                const itemsObj = _.get(vars, `stat_data.不动产.${currentReTab}`, {});
+                const itemKeys = Object.keys(itemsObj);
+
+                if (itemKeys.length === 0) {
+                    $('#re-list').html('<div style="padding:20px;text-align:center;color:#888;">暂无条目</div>');
+                    $('#re-detail').html('');
+                    return;
+                }
+
+                if (!currentReItem || !itemsObj[currentReItem]) {
+                    currentReItem = itemKeys[0];
+                }
+
+                let listHtml = '';
+                itemKeys.forEach(k => {
+                    const item = itemsObj[k];
+                    const isActive = (k === currentReItem) ? 'active' : '';
+                    let titleClass = currentReTab === '住宅' ? 'house' : 'special';
+
+                    listHtml += `
+                        <div class="re-list-item ${isActive}" data-id="${k}">
+                            <span class="re-item-title ${titleClass}">${k}</span>
+                            <span class="re-item-badge">[${currentReTab}]</span>
+                        </div>
+                    `;
+                });
+
+                $('#re-list').html(listHtml);
+                renderReDetail(vars);
+            };
+
+            const renderReDetail = (vars) => {
+                if (!currentReItem) {
+                    $('#re-detail').html('');
+                    return;
+                }
+                const item = _.get(vars, `stat_data.不动产.${currentReTab}.${currentReItem}`, {});
+                let detailHtml = '';
+                let isHouse = currentReTab === '住宅';
+                let titleClass = isHouse ? 'house' : 'special';
+                let locClass = isHouse ? 'house' : 'special';
+
+                let headerBadges = '';
+                headerBadges += `<div class="detail-badge-box">[不动产 · ${currentReTab}]</div>`;
+                headerBadges += `<div class="detail-badge-box">[位置: ${item.位置 || '未知'}]</div>`;
+
+                detailHtml += `
+                    <div class="re-detail-container">
+                        <div class="re-detail-header grad-传说">
+                            <div style="display:flex;flex-direction:column;">
+                                <div class="re-detail-title ${titleClass}">${currentReItem}</div>
+                                <div class="re-loc-row ${locClass}">
+                                    <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                    位置: ${item.位置 || '未知'}
+                                </div>
+                            </div>
+                            <div class="detail-badges">${headerBadges}</div>
+                        </div>
+                `;
+
+                if (isHouse) {
+                    detailHtml += `
+                        <div>
+                            <div class="re-section-title">【 建筑规制与布局 】</div>
+                            <div class="re-box">
+                                <div><span style="font-weight:bold;">外观描述:</span> ${item.外观描述 || '无'}</div>
+                                <div class="re-box-line"></div>
+                                <div><span style="font-weight:bold;">内部布局:</span> ${item.内部布局 || '无'}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="re-section-title house-activity">
+                                <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M11 15h2v2h-2zm0-8h2v6h-2zm1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                                【 人间烟火 · 入住与日常活动 】
+                            </div>
+                            <div class="re-activity-box">
+                                <div class="re-breath-dot"></div>
+                                ${item.入住人员及活动 || '暂无人员活动记录'}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    detailHtml += `
+                        <div>
+                            <div class="re-section-title">【 地理形貌与内部结构 】</div>
+                            <div class="re-box special-min">
+                                <div>
+                                    <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;vertical-align:middle;margin-right:4px;"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg>
+                                    <span style="font-weight:bold;">外观描述:</span> ${item.外观描述 || '无'}
+                                </div>
+                                <div class="re-box-line"></div>
+                                <div>
+                                    <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;vertical-align:middle;margin-right:4px;"><path d="M12 2L2 22h20L12 2zm0 3.83l6.13 12.17H5.87L12 5.83z"/></svg>
+                                    <span style="font-weight:bold;">内部布局:</span> ${item.内部布局 || '无'}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                detailHtml += `
+                        <div class="detail-bottom-cabin" style="margin-top:10px;">
+                            <div class="cabin-row"><span style="font-weight:bold;color:#1c1917;">获得途径及时间:</span> ${item.获得途径及时间 || '无记录'}</div>
+                        </div>
+                    </div>
+                `;
+
+                $('#re-detail').html(detailHtml);
+            };
+
+            const renderOtherPanels = (vars) => {
+                renderRePanel(vars);
+
+                /* 技能部分逻辑 Phase 5 */
+            let currentSkillTab = '忍术';
+            let currentSkillItem = null;
+
+            $('#skill-tabs').on('click', '.skill-tab', function() {
+                $('.skill-tab').removeClass('active');
+                $(this).addClass('active');
+                currentSkillTab = $(this).data('cat');
+                currentSkillItem = null;
+                renderSkillPanel(getAllVariables());
+            });
+
+            $('#skill-list').on('click', '.skill-list-item', function() {
+                $('.skill-list-item').removeClass('active');
+                $(this).addClass('active');
+                currentSkillItem = $(this).data('id');
+                renderSkillDetail(getAllVariables());
+            });
+
+            const renderSkillPanel = (vars) => {
+                const itemsObj = _.get(vars, `stat_data.技能.${currentSkillTab}`, {});
+                const itemKeys = Object.keys(itemsObj);
+
+                if (itemKeys.length === 0) {
+                    $('#skill-list').html('<div style="padding:20px;text-align:center;color:#888;">暂无技能</div>');
+                    $('#skill-detail').html('');
+                    return;
+                }
+
+                if (!currentSkillItem || !itemsObj[currentSkillItem]) {
+                    currentSkillItem = itemKeys[0];
+                }
+
+                let listHtml = '';
+                itemKeys.forEach(k => {
+                    const item = itemsObj[k];
+                    const isActive = (k === currentSkillItem);
+                    const grade = item.技能等级 || 'E';
+                    const gradeClass = 'skill-color-' + grade;
+                    const borderClass = 'skill-border-' + grade;
+                    const bgClass = isActive ? 'skill-bg-' + grade : '';
+
+                    listHtml += `
+                        <div class="skill-list-item ${borderClass} ${bgClass} ${isActive ? 'active' : ''}" data-id="${k}" style="border: 1px solid; border-radius:3px; margin: 6px 12px; padding: 12px 14px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:all 0.2s; ${isActive ? 'border-left-width: 4px;' : 'border-left-width: 1px;'}">
+                            <span class="m-item-title ${gradeClass}" style="font-size:14px;">${k}</span>
+                            <span class="${gradeClass}" style="font-family:monospace; font-size:12px; border:1px solid; padding:2px 6px; border-radius:2px;">[ ${grade} 级 ]</span>
+                        </div>
+                    `;
+                });
+
+                $('#skill-list').html(listHtml);
+                renderSkillDetail(vars);
+            };
+
+            const renderSkillDetail = (vars) => {
+                if (!currentSkillItem) {
+                    $('#skill-detail').html('');
+                    return;
+                }
+                const item = _.get(vars, `stat_data.技能.${currentSkillTab}.${currentSkillItem}`, {});
+                let detailHtml = '';
+
+                const grade = item.技能等级 || 'E';
+                const gradeClass = 'skill-color-' + grade;
+                const borderClass = 'skill-border-' + grade;
+                const bgClass = 'skill-bg-' + grade;
+                const prof = item.熟练度 || '入门';
+                let profKey = '入门';
+                let profPct = 10;
+                if (prof.includes('精通')) { profKey = '精通'; profPct = 100; }
+                else if (prof.includes('熟练') || prof.includes('熟悉')) { profKey = '熟练'; profPct = 50; }
+                else { profKey = '入门'; profPct = 10; }
+
+                detailHtml += `
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom: 2px solid; padding-bottom: 12px;" class="${borderClass}">
+                        <div style="font-size:24px; font-family:'DYmingA',serif; font-weight:900;" class="${gradeClass}">${currentSkillItem}</div>
+                        <div class="${borderClass} ${bgClass} ${gradeClass}" style="width:40px; height:40px; border:2px solid; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:bold; border-radius:4px; font-family:monospace; box-shadow: 1px 1px 3px rgba(0,0,0,0.3);">
+                            ${grade}
+                        </div>
+                    </div>
+                `;
+
+                detailHtml += `
+                    <div style="margin-top:20px;">
+                        <div class="re-section-title">
+                            <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;margin-right:6px;"><path d="M12 2c0 0-5 6.6-5 11 0 2.76 2.24 5 5 5s5-2.24 5-5c0-4.4-5-11-5-11zm0 13c-1.1 0-2-.9-2-2 0-1.66 2-4 2-4s2 2.34 2 4c0 1.1-.9 2-2 2z"/></svg>
+                            【 技能消耗 】
+                        </div>
+                        <div class="re-box" style="min-height:80px; display:flex; align-items:center; padding: 16px; font-family:'XiangcuiDengcusong',serif; font-size:18px !important; font-weight:bold; letter-spacing:1px; line-height:1.8;">
+                            ${item.技能消耗 || '无'}
+                        </div>
+                    </div>
+                `;
+
+                detailHtml += `
+                    <div style="margin-top:20px;">
+                        <div class="re-section-title">
+                            <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;margin-right:6px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/></svg>
+                            【 熟练度 】
+                        </div>
+                        <div class="re-box" style="min-height:100px; padding: 16px 20px;">
+                            <div style="margin-bottom: 12px;">
+                                <span style="font-size:14px !important; color:#78716C;">熟练度: </span>
+                                <span class="prof-color-${profKey}" style="font-size:20px !important; font-weight:bold;">${prof}</span>
+                            </div>
+                            <div style="width:100%; height:8px; background:rgba(0,0,0,0.1); border-radius:4px; overflow:hidden;">
+                                <div class="prof-bg-${profKey}" style="height:100%; width:${profPct}%; transition:width 0.5s;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                $('#skill-detail').html(detailHtml);
+            };
+
+            const renderSkills = (vars) => { renderSkillPanel(vars); };
+
+            /* 社交部分逻辑 Phase 6.1 */
+            let currentSocialTab = '在场';
+            let currentSocialItem = null;
+
+            $('#social-tabs').on('click', '.movable-tab', function() {
+                $('#social-tabs .movable-tab').removeClass('active');
+                $(this).addClass('active');
+                currentSocialTab = $(this).data('cat');
+                currentSocialItem = null;
+                renderSocialPanel(getAllVariables());
+            });
+
+            $('#social-list').on('click', '.social-list-item', function() {
+                $('.social-list-item').removeClass('active');
+                $(this).addClass('active');
+                currentSocialItem = $(this).data('id');
+                renderSocialDetail(getAllVariables());
+            });
+
+            /* Toggle NSFW */
+            $('#social-detail').on('click', '#btn-toggle-nsfw', function() {
+                $('#social-nsfw-content').slideToggle(200);
+            });
+
+            /* Demon Card Shop description trigger */
+            $('#panel-cards').on('click', '.demon-info-trigger', function(e) {
+                e.stopPropagation();
+                $(this).siblings('.demon-shop-desc-overlay').fadeToggle(150);
+            });
+            $('#panel-cards').on('click', '.demon-shop-desc-overlay', function() {
+                $(this).fadeOut(150);
+            });
+
+            /* Tasks tabs logic */
+            let currentTaskTab = '个人修炼';
+            let currentTaskItem = null;
+
+            $('#task-tabs').on('click', '.movable-tab', function() {
+                $('#task-tabs .movable-tab').removeClass('active');
+                $(this).addClass('active');
+                currentTaskTab = $(this).data('cat');
+                currentTaskItem = null;
+                renderTaskPanel(getAllVariables());
+            });
+
+            $('#task-list').on('click', '.task-list-item', function() {
+                $('.task-list-item').removeClass('active');
+                $(this).addClass('active');
+                currentTaskItem = $(this).data('id');
+                renderTaskDetail(getAllVariables());
+            });
+
+            /* Organization tabs logic */
+            let currentOrgTab = '据点';
+            let currentOrgItem = null;
+
+            $('#org-tabs').on('click', '.movable-tab', function() {
+                $('#org-tabs .movable-tab').removeClass('active');
+                $(this).addClass('active');
+                currentOrgTab = $(this).data('cat');
+                currentOrgItem = null;
+                renderOrgPanel(getAllVariables());
+            });
+
+            $('#org-list').on('click', '.org-list-item', function() {
+                $('.org-list-item').removeClass('active');
+                $(this).addClass('active');
+                currentOrgItem = $(this).data('id');
+                renderOrgDetail(getAllVariables());
+            });
+
+            /* Toggle Facilities accordion */
+            $('#org-detail').on('click', '.facility-acc-header', function() {
+                $(this).next('.facility-acc-body').slideToggle(200);
+            });
+
+            /* Toggle Targets */
+            $('#social-detail').on('click', '.target-acc-header', function() {
+                $(this).next('.target-acc-body').slideToggle(200);
+            });
+
+            const getGenderIcon = (gender) => {
+                if (gender === '男') {
+                    return `<svg viewBox="0 0 24 24" fill="#3182CE" width="14" height="14" style="margin-left:4px;"><path d="M20 4v6h-2V7.41l-5.32 5.33A7.95 7.95 0 0114 16a8 8 0 11-2.92-6.17L16.59 4.3V7h2V4h-6zM12 20a6 6 0 100-12 6 6 0 000 12z"/></svg>`;
+                } else if (gender === '女') {
+                    return `<svg viewBox="0 0 24 24" fill="#E53E3E" width="14" height="14" style="margin-left:4px;"><path d="M12 21m-1-4v4h2v-4h3v-2h-3v-3.23A8 8 0 106.3 10a8 8 0 004.7 4.77V15H8v2h3zM12 4a6 6 0 110 12 6 6 0 010-12z"/></svg>`;
+                }
+                return '';
+            };
+
+            const renderBar = (label, val, icon, posColor, negColor, isDark = false) => {
+                let widthPct = Math.min(100, Math.max(0, Math.abs(val)));
+                let color = val >= 0 ? posColor : negColor;
+                let labelColor = isDark ? '#ecf0f1' : '#2C3E50';
+
+                return `
+                    <div style="margin-bottom: 8px;">
+                        <div style="display:flex; justify-content:space-between; font-size:12px; color:${labelColor};">
+                            <span style="display:flex; align-items:center; gap:4px;">${icon} ${label}</span>
+                            <span style="font-weight:bold; color:${color};">${val}</span>
+                        </div>
+                        <div class="social-bar-container">
+                            <div class="social-bar-fill" style="width: ${widthPct}%; background: ${color};"></div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            const renderSocialPanel = (vars) => {
+                const itemsObj = _.get(vars, `stat_data.社交.${currentSocialTab}`, {});
+                const itemKeys = Object.keys(itemsObj);
+
+                if (itemKeys.length === 0) {
+                    $('#social-list').html('<div style="padding:20px;text-align:center;color:#888;font-size:13px;">暂无数据</div>');
+                    $('#social-detail').html('');
+                    return;
+                }
+
+                if (!currentSocialItem || !itemsObj[currentSocialItem]) {
+                    currentSocialItem = itemKeys[0];
+                }
+
+                let listHtml = '';
+                itemKeys.forEach(k => {
+                    const item = itemsObj[k];
+                    const isActive = (k === currentSocialItem);
+                    const gender = item.性别 || '未知';
+                    const age = item.年龄 || (currentSocialTab === '死亡角色' ? '' : '?');
+
+                    listHtml += `
+                        <div class="social-list-item ${isActive ? 'active' : ''}" data-id="${k}">
+                            <div style="display:flex; align-items:center; flex-wrap:wrap; gap: 4px;">
+                                <span class="social-name">${k}</span>
+                                ${getGenderIcon(gender)}
+                            </div>
+                            <div class="social-age">${age ? age+'岁' : ''}</div>
+                        </div>
+                    `;
+                });
+
+                $('#social-list').html(listHtml);
+                renderSocialDetail(vars);
+            };
+
+            const renderSocialDetail = (vars) => {
+                if (!currentSocialItem) {
+                    $('#social-detail').html('');
+                    return;
+                }
+                const item = _.get(vars, `stat_data.社交.${currentSocialTab}.${currentSocialItem}`, {});
+                let html = '';
+
+                if (currentSocialTab === '死亡角色') {
+                    html = `
+                        <div class="social-glass" style="padding: 24px; text-align:center;">
+                            <div style="font-size: 24px; font-weight:bold; color:#1C1917; margin-bottom:10px; font-family: 'DYmingA', serif;">${item.角色名称 || currentSocialItem}</div>
+                            <div style="display:inline-block; padding: 4px 12px; background:#e0e0e0; color:#555; border-radius:4px; margin-bottom:20px; font-size:13px;">已死亡</div>
+
+                            <div class="social-trait-box" style="text-align:left; max-width:500px; margin:0 auto;">
+                                <div class="social-kv-row"><div class="social-kv-key">死亡时间:</div><div class="social-kv-val">${item.死亡时间 || '未知'}</div></div>
+                                <div class="social-kv-row"><div class="social-kv-key">死亡原因:</div><div class="social-kv-val">${item.死亡原因 || '未知'}</div></div>
+                                <div style="margin-top:12px; border-top:1px dashed #ccc; padding-top:12px;">
+                                    <div class="social-kv-key" style="margin-bottom:4px;">生平描述:</div>
+                                    <div style="color:#2C3E50; line-height:1.6; font-size:13px;">${item.生平描述 || '无记录'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    /* In scene / Out of scene */
+                    const avatarStr = item.立绘 || '';
+                    const hasAvatar = avatarStr && avatarStr.trim() !== '';
+                    const avatarStyle = hasAvatar ? `background: url('${avatarStr}') center/cover no-repeat;` : `background: rgba(0,0,0,0.05);`;
+
+                    /* SVG icons */
+                    const heartSvg = `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+                    const shieldSvg = `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>`;
+                    const fireSvg = `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M11.71 3.56L10 6.64c-3.1 5.37-4.43 8.35-4.43 10.36 0 3.87 3.13 7 7 7s7-3.13 7-7c0-2.01-1.33-4.99-4.43-10.36l-1.71-3.08a.93.93 0 00-1.72 0z"/></svg>`;
+                    const moonSvg = `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8C12.51 3.08 12.26 3 12 3z"/></svg>`;
+                    const eyeSvg = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
+                    const dropSvg = `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8zm0 16c-3.12 0-5.83-2.1-5.83-6 0-2.31 1.94-5.35 5.83-8.8 3.89 3.45 5.83 6.49 5.83 8.8 0 3.9-2.71 6-5.83 6z"/></svg>`;
+
+                    /* Octagon Stats */
+                    const b = item.八维属性 || {};
+                    const bHtml = ['忍','体','幻','智','力','速','精','印'].map(st => `
+                        <div class="social-seal">
+                            <span class="social-seal-title">${st}</span>
+                            <span class="social-seal-val">${b[st]||1}</span>
+                        </div>
+                    `).join('');
+
+                    /* Wardrobe */
+                    let wardrobeHtml = '';
+                    const wg = item.衣柜 || {};
+                    if (typeof wg === 'object' && Object.keys(wg).length > 0) {
+                        for(let wn in wg) {
+                            let parts = '';
+                            let wData = wg[wn];
+                            if(wData.外套) parts += `<div style="margin-top:2px;">🧥 <span style="color:#7F8C8D;">外套:</span> ${wData.外套}</div>`;
+                            if(wData.内搭) parts += `<div style="margin-top:2px;">👕 <span style="color:#7F8C8D;">内搭:</span> ${wData.内搭}</div>`;
+                            if(wData.贴身内衣) parts += `<div style="margin-top:2px;">👙 <span style="color:#7F8C8D;">内衣:</span> ${wData.贴身内衣}</div>`;
+                            if(wData.下装) parts += `<div style="margin-top:2px;">👖 <span style="color:#7F8C8D;">下装:</span> ${wData.下装}</div>`;
+                            if(wData.足具) parts += `<div style="margin-top:2px;">🧦 <span style="color:#7F8C8D;">足具:</span> ${wData.足具}</div>`;
+
+                            wardrobeHtml += `<div class="social-blockquote" style="margin-bottom:12px;">
+                                <strong style="color:#C0392B;">[${wn}] ${wData.穿搭风格||''}</strong>
+                                ${parts}
+                            </div>`;
+                        }
+                    } else if (typeof wg === 'string' && wg) {
+                        wardrobeHtml += `<div class="social-blockquote">${wg}</div>`;
+                    }
+
+                    /* Targets (Short-term inside accordion, Long-term fixed) */
+                    let targetHtml = '';
+                    if (item.长期理想) {
+                        targetHtml += `<div class="social-blockquote" style="border-left-color:#3498DB; margin-bottom:10px;"><strong>长期理想:</strong> ${item.长期理想}</div>`;
+                    }
+                    const tg = item.短期目标 || {};
+                    if (typeof tg === 'object' && Object.keys(tg).length > 0) {
+                        for(let tn in tg) {
+                            targetHtml += `
+                            <div style="margin-top:6px; border:1px solid rgba(0,0,0,0.1); border-radius:4px; overflow:hidden;">
+                                <div class="target-acc-header" style="background:rgba(255,255,255,0.6); padding:8px 12px; cursor:pointer; font-weight:bold; font-size:13px; display:flex; justify-content:space-between; align-items:center;">
+                                    <span style="color:#C0392B;">📌 ${tn}</span>
+                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                                </div>
+                                <div class="target-acc-body" style="display:none; padding:12px; background:rgba(255,255,255,0.4); font-size:12px; line-height:1.6;">
+                                    <div><strong>目标:</strong> ${tg[tn].目标内容||'无'}</div>
+                                    <div><strong>性质:</strong> ${tg[tn].目标性质||'无'}</div>
+                                    <div><strong>期限:</strong> ${tg[tn].目标截止日期||'无'}</div>
+                                    <div><strong>奖励:</strong> ${tg[tn].成功奖励||'无'}</div>
+                                    <div><strong>后果:</strong> ${tg[tn].失败后果||'无'}</div>
+                                </div>
+                            </div>`;
+                        }
+                    } else if (typeof tg === 'string' && tg) {
+                        targetHtml += `<div class="social-blockquote">${tg}</div>`;
+                    }
+
+                    /* Relations */
+                    let relHtml = '';
+                    const rel = item.关系网 || {};
+                    if (typeof rel === 'object' && Object.keys(rel).length > 0) {
+                        for(let rn in rel) {
+                            relHtml += `<div class="social-blockquote"><strong>${rn}</strong> (${rel[rn].关系性质||''}): ${rel[rn].关系对象||''}</div>`;
+                        }
+                    } else if (typeof rel === 'string' && rel) {
+                        relHtml += `<div class="social-blockquote">${rel}</div>`;
+                    }
+
+                    /* Female NSFW Panel */
+                    let nsfwBtnHtml = '';
+                    let nsfwContentHtml = '';
+                    if (item.性别 === '女') {
+                        let sxHtml = '';
+                        let dtHtml = '';
+
+                        const sx = item.NSFW性癖 || {};
+                        if(typeof sx === 'object') {
+                            const icons = ['🔥','❤️','👄','💦','⛓️','🍑','🍒'];
+                            let i = 0;
+                            for(let sk in sx) {
+                                let icon = icons[i % icons.length]; i++;
+                                sxHtml += `<div style="margin-bottom:4px; border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:2px;"><span style="color:#F687B3;">${icon} ${sk}:</span> ${sx[sk]}</div>`;
+                            }
+                        } else sxHtml = sx;
+
+                        const dt = item.NSFW数据 || {};
+                        let climaxVal = 0;
+                        if(typeof dt === 'object') {
+                            const icons = ['💧','👅','👙','🍑','🌸','✨','🎀','🥵'];
+                            let i = 0;
+                            for(let dk in dt) {
+                                if (dk === '高潮进度') {
+                                    climaxVal = dt[dk];
+                                    continue;
+                                }
+                                let icon = icons[i % icons.length]; i++;
+                                dtHtml += `<div style="margin-bottom:4px; border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:2px;"><span style="color:#F687B3;">${icon} ${dk}:</span> ${dt[dk]}</div>`;
+                            }
+                        } else dtHtml = dt;
+
+                        const climaxBar = `<div style="margin-bottom:6px; border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:4px;">
+        <div style="color:#F687B3; margin-bottom:4px;">💦 高潮进度:</div>
+        <div style="display:flex; align-items:center;">
+            <div style="flex:1; height:8px; background:rgba(0,0,0,0.3); border-radius:4px; overflow:hidden; margin-right:8px;">
+                <div style="width:${Math.min(100, Math.max(0, climaxVal))}%; background:#F687B3; height:100%;"></div>
+            </div>
+            <span style="color:#ecf0f1; font-weight:bold; font-size:12px;">${climaxVal}</span>
+        </div>
+    </div>`;
+
+                        nsfwBtnHtml = `
+                            <button id="btn-toggle-nsfw" class="social-nsfw-btn" style="width: 80%; max-width:200px; margin: 0 auto; margin-top:8px;">
+                                ${eyeSvg} <span>查看私密档案</span>
+                            </button>`;
+
+                        nsfwContentHtml = `
+                            <div id="social-nsfw-content" class="social-nsfw-panel">
+                                <div style="margin-bottom:12px;">
+                                    <div style="color:#e74c3c; font-weight:bold; margin-bottom:8px; border-bottom:1px solid #e74c3c; padding-bottom:4px;">【 NSFW性癖 】</div>
+                                    <div style="font-size:12px; line-height:1.6;">${sxHtml || '无数据'}</div>
+                                </div>
+                                <div>
+                                    <div style="color:#e74c3c; font-weight:bold; margin-bottom:8px; border-bottom:1px solid #e74c3c; padding-bottom:4px;">【 NSFW数据 】</div>
+                                    ${climaxBar}
+                                    <div style="font-size:12px; line-height:1.6;">${dtHtml || '无数据'}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    html = `
+                        <div style="display: flex; gap: 20px; height: 100%; width: 100%;">
+
+                            
+                            <div style="flex: 0 0 35%; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-right:10px; overflow-y:auto; border-right:1px dashed rgba(0,0,0,0.15);">
+                                <div class="social-portrait-container" style="${avatarStyle}">
+                                    <div class="social-shine"></div>
+                                    ${!hasAvatar ? '<span>暂无立绘</span>' : ''}
+                                </div>
+                                <div class="social-wood-sign" style="width: 80%; max-width:200px; margin: 0 auto; margin-top: 8px;">${currentSocialItem}</div>
+                                ${nsfwBtnHtml}
+                                ${nsfwContentHtml}
+                            </div>
+
+
+                            <div style="flex: 0 0 32%; display: flex; flex-direction: column; gap: 15px; min-width:0; overflow-y: auto; padding-right:10px; border-right:1px dashed rgba(0,0,0,0.15);">
+                                <div class="social-glass" style="padding: 16px;">
+                                    <div class="social-kv-row"><div class="social-kv-key">身份:</div><div class="social-kv-val">${item.身份||'无'}</div></div>
+                                    <div class="social-kv-row"><div class="social-kv-key">居住地:</div><div class="social-kv-val">${item.居住地||'无'}</div></div>
+                                    <div class="social-kv-row" style="margin-bottom:0;"><div class="social-kv-key" style="width:85px;">当前所在地:</div><div class="social-kv-val">${item.当前所在地||'无'}</div></div>
+                                </div>
+
+                                <div class="social-glass" style="padding: 16px;">
+                                    ${renderBar('好感度', item.好感度||0, heartSvg, '#F687B3', '#1C1917')}
+                                    ${renderBar('信任度', item.信任度||0, shieldSvg, '#F6E05E', '#A0AEC0')}
+                                    ${item.性别 === '女' ? renderBar('爱意值', item.爱意值||0, fireSvg, '#E53E3E', '#E53E3E') : ''}
+                                    ${item.性别 === '女' ? renderBar('堕落值', item.堕落值||0, moonSvg, '#9F7AEA', '#9F7AEA') : ''}
+                                </div>
+
+                                <div style="display:flex; flex-direction:column; gap:12px;">
+                                    <div class="social-trait-box">
+                                        <div style="font-weight:bold; color:#1C1917; margin-bottom:6px; font-size:14px;">【 人物性格 】</div>
+                                        <div style="line-height:1.6;">${item.人物性格||'无'}</div>
+
+                                        <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-top:16px; margin-bottom:8px; border-top:1px dashed rgba(0,0,0,0.1); padding-top:12px;">【 理想与目标 】</div>
+                                        ${targetHtml || '<div style="font-size:12px; color:#999;">无目标数据</div>'}
+                                    </div>
+                                </div>
+
+                                <div class="social-glass" style="padding: 16px; margin-top: auto;">
+                                    <div style="text-align:center; font-weight:bold; font-size:15px; margin-bottom:12px; color:#1C1917; font-family:'XiangcuiDengcusong',serif;">
+                                        【 实力层级: ${item.实力层级||'未知'} 】
+                                    </div>
+                                    <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+                                        ${bHtml}
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="flex: 1; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; padding-right:10px;">
+                                <div class="social-glass" style="padding: 16px; display:flex; flex-direction:column;">
+                                    <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:8px;">【 着装档案 】</div>
+                                    <div style="font-size:12px; color:#2C3E50; margin-bottom:16px; line-height:1.6;">
+                                        ${item.着装 || '无'}
+                                    </div>
+
+                                    <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-top:auto; margin-bottom:8px; border-top:1px dashed rgba(0,0,0,0.1); padding-top:12px;">【 搭配衣柜 】</div>
+                                    <div style="flex:1; overflow-y:auto; padding-right:4px;">
+                                        ${wardrobeHtml || '<div style="font-size:12px; color:#999;">无数据</div>'}
+                                    </div>
+                                </div>
+
+                                <div class="social-glass" style="padding: 16px;">
+                                    <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:8px;">【 关系网 】</div>
+                                    <div style="padding-right:4px;">
+                                        ${relHtml || '<div style="font-size:12px; color:#999;">无数据</div>'}
+                                    </div>
+                                </div>
+
+                                <div class="social-note">"${item.内心话||'...'}"</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                $('#social-detail').html(html);
+            };
+
+            const renderSocial = (vars) => { renderSocialPanel(vars); };
+
+            const renderOrgPanel = (vars) => {
+                const itemsObj = _.get(vars, `stat_data.组织.${currentOrgTab}`, {});
+                const itemKeys = Object.keys(itemsObj);
+
+                if (itemKeys.length === 0) {
+                    $('#org-list').html('<div style="padding:20px;text-align:center;color:#888;font-size:13px;">暂无数据</div>');
+                    $('#org-detail').html('');
+                    return;
+                }
+
+                if (!currentOrgItem || !itemsObj[currentOrgItem]) {
+                    currentOrgItem = itemKeys[0];
+                }
+
+                let listHtml = '';
+                itemKeys.forEach(k => {
+                    const item = itemsObj[k];
+                    const isActive = (k === currentOrgItem);
+                    const activeClass = isActive ? 'active' : '';
+
+                    if (currentOrgTab === '据点') {
+                        const loc = item.位置 || '未知';
+                        listHtml += `
+                            <div class="org-list-item ${activeClass}" data-id="${k}">
+                                <div class="social-name" style="font-size:14px; font-weight:bold; color:#1C1917; font-family:'XiangcuiDengcusong', 'DYmingA', serif;">${k}</div>
+                                <div style="font-size:12px; color:#7F8C8D; margin-top:2px;">位置: ${loc}</div>
+                            </div>
+                        `;
+                    } else if (currentOrgTab === '干部') {
+                        listHtml += `
+                            <div class="org-list-item ${activeClass}" data-id="${k}">
+                                <span class="social-name" style="font-size:14px; font-weight:bold; color:#1C1917; font-family:'XiangcuiDengcusong', 'DYmingA', serif;">${k}</span>
+                            </div>
+                        `;
+                    } else if (currentOrgTab === '部队') {
+                        listHtml += `
+                            <div class="org-list-item ${activeClass}" data-id="${k}">
+                                <span class="social-name" style="font-size:14px; font-weight:bold; color:#1C1917; font-family:'XiangcuiDengcusong', 'DYmingA', serif;">${k}</span>
+                            </div>
+                        `;
+                    } else if (currentOrgTab === '配置') {
+                        const desc = item.配置概述 || '无概述';
+                        listHtml += `
+                            <div class="org-list-item ${activeClass}" data-id="${k}">
+                                <div class="social-name" style="font-size:14px; font-weight:bold; color:#1C1917; font-family:'XiangcuiDengcusong', 'DYmingA', serif;">${k}</div>
+                                <div style="font-size:12px; color:#7F8C8D; margin-top:2px;">${desc}</div>
+                            </div>
+                        `;
+                    } else if (currentOrgTab === '计划') {
+                        listHtml += `
+                            <div class="org-list-item ${activeClass}" data-id="${k}">
+                                <span class="social-name" style="font-size:14px; font-weight:bold; color:#1C1917; font-family:'XiangcuiDengcusong', 'DYmingA', serif;">${k}</span>
+                            </div>
+                        `;
+                    } else if (currentOrgTab === '资源') {
+                        const qty = item.数量 || 0;
+                        listHtml += `
+                            <div class="org-list-item ${activeClass}" data-id="${k}" style="display:flex; align-items:center; justify-content:space-between;">
+                                <span class="social-name" style="font-size:14px; font-weight:bold; color:#1C1917; font-family:'XiangcuiDengcusong', 'DYmingA', serif;">${k}</span>
+                                <span style="font-size:12px; font-weight:bold; color:#b23a2a;">x${qty}</span>
+                            </div>
+                        `;
+                    }
+                });
+
+                $('#org-list').html(listHtml);
+                renderOrgDetail(vars);
+            };
+
+            const renderOrgDetail = (vars) => {
+                if (!currentOrgItem) {
+                    $('#org-detail').html('');
+                    return;
+                }
+                let detailHtml = '';
+
+                if (currentOrgTab === '据点') {
+                    const item = _.get(vars, `stat_data.组织.据点.${currentOrgItem}`, {});
+
+                    /* Split facilities accumulation */
+                    const accumulation = item.设施积累 || '';
+                    let accHtml = '';
+                    if (accumulation) {
+                        accumulation.split('/').forEach(acc => {
+                            if (acc.trim()) {
+                                accHtml += `<div class="identity-tag" style="margin-right:8px; margin-bottom:8px; background:#4A3B2C; color:#eaddc5; border-radius:3px; padding: 4px 8px; font-size:12px; display:inline-block;">${acc.trim()}</div>`;
+                            }
+                        });
+                    }
+
+                    /* Facilities accordion */
+                    const facilities = item.据点附属设施 || {};
+                    let facHtml = '';
+                    if (typeof facilities === 'object' && Object.keys(facilities).length > 0) {
+                        for (let fn in facilities) {
+                            const fac = facilities[fn];
+                            facHtml += `
+                            <div style="margin-top:8px; border:1px solid rgba(0,0,0,0.1); border-radius:6px; overflow:hidden; background:rgba(255,255,255,0.3);">
+                                <div class="facility-acc-header" style="background:rgba(255,255,255,0.6); padding:8px 12px; cursor:pointer; font-weight:bold; font-size:13px; display:flex; justify-content:space-between; align-items:center;">
+                                    <span style="color:#8B5A2B;">🏛️ ${fn}</span>
+                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                                </div>
+                                <div class="facility-acc-body" style="display:none; padding:12px; font-size:13px; line-height:1.6; border-top:1px solid rgba(0,0,0,0.05);">
+                                    <div style="margin-bottom:4px;"><strong style="color: #555;">位置:</strong> ${fac.位置 || '未知'}</div>
+                                    <div style="margin-bottom:4px;"><strong style="color: #555;">功能定位:</strong> ${fac.功能定位 || '无'}</div>
+                                    <div style="margin-bottom:4px;"><strong style="color: #555;">内部描述:</strong> ${fac.内部描述 || '无'}</div>
+                                    <div style="margin-bottom:4px;"><strong style="color: #555;">正在进行的任务:</strong> ${fac.正在进行的任务 || '无'}</div>
+                                    <div><strong style="color: #555;">任务预计完成时间:</strong> ${fac.任务预计完成时间 || '无'}</div>
+                                </div>
+                            </div>`;
+                        }
+                    } else {
+                        facHtml = '<div style="font-size:12px; color:#999; padding:10px 0;">无附属设施</div>';
+                    }
+
+                    detailHtml = `
+                        <div class="social-glass" style="padding: 16px; min-height:100%; display:flex; flex-direction:column; gap:12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:8px;">
+                                <div style="font-size:20px; font-weight:bold; color:#1C1917; font-family:'DYmingA',serif;">${currentOrgItem}</div>
+                                <div style="font-size:13px; font-weight:bold; color:#2C3E50; background:rgba(0,0,0,0.05); padding:3px 8px; border-radius:4px;">公开状态: ${item.是否公开 || '否'}</div>
+                            </div>
+
+                            <div style="font-size:14px; line-height:1.6; display:flex; flex-direction:column; gap:8px;">
+                                <div><strong style="color:#7F8C8D;">位置:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.位置 || '未知'}</span></div>
+                                <div><strong style="color:#7F8C8D;">与其他组织的关系:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.与其他组织的关系 || '无'}</span></div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 据点外观描述 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.据点外观描述 || '无描述'}</div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:6px;">【 设施积累 】</div>
+                                <div>${accHtml || '<span style="font-size:12px; color:#999;">无设施积累</span>'}</div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px; flex:1;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 附属设施档案 】</div>
+                                <div style="max-height:220px; overflow-y:auto; padding-right:4px;">
+                                    ${facHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentOrgTab === '干部') {
+                    const item = _.get(vars, `stat_data.组织.干部.${currentOrgItem}`, {});
+                    const loyalty = item.忠诚度 || 0;
+
+                    /* Stamp logic for Contribution Level */
+                    const contrib = item.贡献程度 || '低';
+                    let stampClass = 'stamp-low';
+                    if (contrib === '高') { stampClass = 'stamp-high'; }
+                    else if (contrib === '中') { stampClass = 'stamp-med'; }
+
+                    detailHtml = `
+                        <div class="social-glass" style="padding: 16px; min-height:100%; display:flex; flex-direction:column; gap:15px; position:relative; overflow:hidden;">
+                            <!-- Slanted Ink Stamp for Contribution -->
+                            <div style="position:absolute; right:20px; top:15px; z-index:10;">
+                                <div class="org-stamp ${stampClass}">${contrib}贡献</div>
+                            </div>
+
+                            <div style="border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:8px; max-width: 70%;">
+                                <div style="font-size:22px; font-weight:bold; color:#1C1917; font-family:'DYmingA',serif;">${currentOrgItem}</div>
+                            </div>
+
+                            <div style="font-size:14px; line-height:1.6; display:flex; flex-direction:column; gap:10px;">
+                                <div><strong style="color:#7F8C8D;">职能定位:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.职能定位 || '无'}</span></div>
+                                <div><strong style="color:#7F8C8D;">负责的附属设施:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.负责的附属设施 || '无'}</span></div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:12px;">
+                                <div style="color:#8B5A2B; font-weight:bold; margin-bottom:6px; font-size:13px; display:flex; align-items:center; gap:6px;">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                                    忠诚度:
+                                </div>
+                                <div style="display:flex; align-items:center;">
+                                    <div style="flex:1; height:10px; background:rgba(0,0,0,0.05); border-radius:5px; overflow:hidden; margin-right:10px; border:1px solid rgba(0,0,0,0.05);">
+                                        <div style="width:${loyalty}%; height:100%; background:#8B5A2B; transition:width 0.5s ease-in-out; border-radius:5px;"></div>
+                                    </div>
+                                    <span style="color:#8B5A2B; font-weight:bold; font-size:14px; font-family:monospace;">${loyalty}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentOrgTab === '部队') {
+                    const item = _.get(vars, `stat_data.组织.部队.${currentOrgItem}`, {});
+                    detailHtml = `
+                        <div class="social-glass" style="padding: 16px; min-height:100%; display:flex; flex-direction:column; gap:12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:8px;">
+                                <div style="font-size:20px; font-weight:bold; color:#1C1917; font-family:'DYmingA',serif;">${currentOrgItem}</div>
+                                <div style="font-size:13px; font-weight:bold; color:#b23a2a; background:rgba(178,58,42,0.05); padding:3px 8px; border-radius:4px; font-family:monospace;">编制: ${item.人数 || 0}人</div>
+                            </div>
+
+                            <div style="font-size:14px; line-height:1.6; display:flex; flex-direction:column; gap:8px;">
+                                <div><strong style="color:#7F8C8D;">部队定位:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.定位 || '无'}</span></div>
+                                <div><strong style="color:#7F8C8D;">部队所在地:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.部队所在地 || '未知'}</span></div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 部队构成 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.部队构成 || '无记录'}</div>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="background:rgba(255,255,255,0.4); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05);">
+                                    <div style="font-weight:bold; color:#2C3E50; font-size:13px; margin-bottom:4px; border-bottom:1px solid rgba(0,0,0,0.05); padding-bottom:2px;">📍 当前行动</div>
+                                    <div style="font-size:13px; color:#1C1917; line-height:1.4; font-family:'XiangcuiDengcusong',serif;">${item.当前行动 || '无'}</div>
+                                </div>
+                                <div style="background:rgba(255,255,255,0.4); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05);">
+                                    <div style="font-weight:bold; color:#b23a2a; font-size:13px; margin-bottom:4px; border-bottom:1px solid rgba(178,58,42,0.1); padding-bottom:2px;">📜 下回合行动</div>
+                                    <div style="font-size:13px; color:#1C1917; line-height:1.4; font-family:'XiangcuiDengcusong',serif;">${item.下回合行动 || '未下达'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentOrgTab === '配置') {
+                    const item = _.get(vars, `stat_data.组织.配置.${currentOrgItem}`, {});
+                    detailHtml = `
+                        <div class="social-glass" style="padding: 16px; min-height:100%; display:flex; flex-direction:column; gap:12px;">
+                            <div style="border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:8px;">
+                                <div style="font-size:20px; font-weight:bold; color:#1C1917; font-family:'DYmingA',serif;">${currentOrgItem}</div>
+                            </div>
+
+                            <div style="font-size:14px; line-height:1.6; display:flex; flex-direction:column; gap:8px;">
+                                <div><strong style="color:#7F8C8D;">部署据点:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.配置部署据点 || '无'}</span></div>
+                                <div><strong style="color:#7F8C8D;">来源:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.配置来源 || '未知'}</span></div>
+                                <div><strong style="color:#7F8C8D;">主要用途:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.配置用途 || '无'}</span></div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 配置描述 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.配置描述 || '无详细描述'}</div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentOrgTab === '计划') {
+                    const item = _.get(vars, `stat_data.组织.计划.${currentOrgItem}`, {});
+                    detailHtml = `
+                        <div class="social-glass" style="padding: 16px; min-height:100%; display:flex; flex-direction:column; gap:12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:8px;">
+                                <div style="font-size:20px; font-weight:bold; color:#1C1917; font-family:'DYmingA',serif;">${currentOrgItem}</div>
+                                <div style="display:flex; align-items:baseline; gap:4px;">
+                                    <span style="font-size: 13px; color: #7F8C8D;">阶段进度: </span>
+                                    <span style="font-size: 13px; color: #777;">${item.当前阶段}</span>
+                                    <span style="font-size: 20px; font-weight: bold; color: #b23a2a;">/ ${item.总需阶段}</span>
+                                </div>
+                            </div>
+
+                            <div style="font-size:14px; line-height:1.6; display:flex; flex-direction:column; gap:8px;">
+                                <div><strong style="color:#7F8C8D;">当前阶段预计完成时间:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.当前阶段预计完成时间 || '未知'}</span></div>
+                                <div><strong style="color:#7F8C8D;">主要负责人员:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.主要负责人员 || '无'}</span></div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 计划概述 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.计划概述 || '无'}</div>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="background:rgba(255,255,255,0.4); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05);">
+                                    <div style="font-weight:bold; color:#2C3E50; font-size:13px; margin-bottom:4px; border-bottom:1px solid rgba(0,0,0,0.05); padding-bottom:2px;">🔄 计划动态</div>
+                                    <div style="font-size:13px; color:#1C1917; line-height:1.4; font-family:'XiangcuiDengcusong',serif;">${item.计划动态 || '无'}</div>
+                                </div>
+                                <div style="background:rgba(255,255,255,0.4); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05);">
+                                    <div style="font-weight:bold; color:#b23a2a; font-size:13px; margin-bottom:4px; border-bottom:1px solid rgba(178,58,42,0.1); padding-bottom:2px;">🎯 预计成果</div>
+                                    <div style="font-size:13px; color:#1C1917; line-height:1.4; font-family:'XiangcuiDengcusong',serif;">${item.预计成果 || '无'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentOrgTab === '资源') {
+                    const item = _.get(vars, `stat_data.组织.资源.${currentOrgItem}`, {});
+                    const quality = item.物品品质 || '普通';
+                    const qty = item.数量 || 0;
+
+                    const titleColorClass = 'color-' + quality;
+                    const borderClass = 'grad-' + quality;
+
+                    detailHtml = `
+                        <div class="social-glass" style="padding: 16px; min-height:100%; display:flex; flex-direction:column; gap:12px;">
+                            <div class="detail-header ${borderClass}" style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid transparent; padding-bottom:8px;">
+                                <div class="detail-title ${titleColorClass}" style="font-size:20px; font-weight:bold; font-family:'DYmingA',serif;">${currentOrgItem}</div>
+                                <div style="font-size:14px; font-weight:bold; color:#b23a2a; font-family:monospace; background:rgba(178,58,42,0.05); padding:3px 8px; border-radius:4px;">数量: x${qty}</div>
+                            </div>
+
+                            <div style="font-size:14px; line-height:1.6; display:flex; flex-direction:column; gap:8px;">
+                                <div><strong style="color:#7F8C8D;">存放地点:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.所在地点 || '未知'}</span></div>
+                                <div><strong style="color:#7F8C8D;">品质:</strong> <span class="${titleColorClass}" style="font-weight:bold;">${quality}</span></div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 物品概述 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.物品概述 || '无'}</div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 用途描述 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.用途描述 || '无'}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                $('#org-detail').html(detailHtml);
+            };
+
+            const renderOrg = (vars) => {
+                renderOrgPanel(vars);
+            };
+
+            const renderTaskProgress = (progressStr) => {
+                if (!progressStr) { return ''; }
+                const parts = progressStr.split('/');
+                if (parts.length === 2) {
+                    const current = parts[0].trim();
+                    const total = parts[1].trim();
+                    const currentNum = parseFloat(current) || 0;
+                    const totalNum = parseFloat(total) || 1;
+                    const pct = Math.min(100, Math.max(0, (currentNum / totalNum) * 100));
+
+                    return `
+                        <div style="margin-bottom: 12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-end; font-size:13px; color:#2C3E50; margin-bottom: 4px;">
+                                <span>⌛ 任务进度:</span>
+                                <div style="display:flex; align-items:baseline; gap:4px;">
+                                    <span style="font-size: 11px; color: #777;">${current}</span>
+                                    <span style="font-size: 18px; font-weight: bold; color: #b23a2a;">/ ${total}</span>
+                                </div>
+                            </div>
+                            <div class="social-bar-container" style="height: 10px;">
+                                <div class="social-bar-fill" style="width: ${pct}%; background: #b23a2a; height: 100%; border-radius: 6px; transition: width 0.5s ease-in-out;"></div>
+                            </div>
+                        </div>
+                    `;
+                } else if (progressStr.includes('%')) {
+                    const pct = parseFloat(progressStr) || 0;
+                    return `
+                        <div style="margin-bottom: 12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-end; font-size:13px; color:#2C3E50; margin-bottom: 4px;">
+                                <span>⌛ 任务进度:</span>
+                                <span style="font-size: 16px; font-weight: bold; color: #b23a2a;">${progressStr}</span>
+                            </div>
+                            <div class="social-bar-container" style="height: 10px;">
+                                <div class="social-bar-fill" style="width: ${pct}%; background: #b23a2a; height: 100%; border-radius: 6px; transition: width 0.5s ease-in-out;"></div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div style="margin-bottom: 12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; color:#2C3E50;">
+                                <span>⌛ 任务进度:</span>
+                                <span style="font-size: 15px; font-weight: bold; color: #b23a2a;">${progressStr}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            };
+
+            const renderTaskPanel = (vars) => {
+                const itemsObj = _.get(vars, `stat_data.任务.${currentTaskTab}`, {});
+                const itemKeys = Object.keys(itemsObj);
+
+                if (itemKeys.length === 0) {
+                    $('#task-list').html('<div style="padding:20px;text-align:center;color:#888;font-size:13px;">暂无数据</div>');
+                    $('#task-detail').html('');
+                    return;
+                }
+
+                if (!currentTaskItem || !itemsObj[currentTaskItem]) {
+                    currentTaskItem = itemKeys[0];
+                }
+
+                let listHtml = '';
+                itemKeys.forEach(k => {
+                    const item = itemsObj[k];
+                    const isActive = (k === currentTaskItem);
+                    const activeClass = isActive ? 'active' : '';
+
+                    listHtml += `
+                        <div class="task-list-item ${activeClass}" data-id="${k}">
+                            <span class="social-name" style="font-size:14px; font-weight:bold; color:#1C1917; font-family:'XiangcuiDengcusong', 'DYmingA', serif;">${k}</span>
+                        </div>
+                    `;
+                });
+
+                $('#task-list').html(listHtml);
+                renderTaskDetail(vars);
+            };
+
+            const renderTaskDetail = (vars) => {
+                if (!currentTaskItem) {
+                    $('#task-detail').html('');
+                    return;
+                }
+                let detailHtml = '';
+
+                if (currentTaskTab === '个人修炼') {
+                    const item = _.get(vars, `stat_data.任务.个人修炼.${currentTaskItem}`, {});
+                    const difficulty = item.修炼难度 || '普通';
+                    let diffClass = 'color-普通';
+                    if (difficulty.includes('高') || difficulty.includes('难') || difficulty.includes('S')) { diffClass = 'color-六道级'; }
+                    else if (difficulty.includes('中') || difficulty.includes('A') || difficulty.includes('B')) { diffClass = 'color-传说'; }
+
+                    detailHtml = `
+                        <div class="social-glass" style="padding: 16px; min-height:100%; display:flex; flex-direction:column; gap:12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:8px;">
+                                <div style="font-size:20px; font-weight:bold; color:#1C1917; font-family:'DYmingA',serif;">${currentTaskItem}</div>
+                                <div style="font-size:13px; font-weight:bold;" class="${diffClass}">难度: ${difficulty}</div>
+                            </div>
+
+                            <div style="font-size:14px; line-height:1.6; display:flex; flex-direction:column; gap:6px;">
+                                <div><strong style="color:#7F8C8D;">发起日期:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.发起日期 || '未知'}</span></div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                ${renderTaskProgress(item.任务进度)}
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 修炼内容 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.修炼内容 || '无'}</div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 预期成果 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.预期成果 || '无'}</div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentTaskTab === '个人事项') {
+                    const item = _.get(vars, `stat_data.任务.个人事项.${currentTaskItem}`, {});
+                    detailHtml = `
+                        <div class="social-glass" style="padding: 16px; min-height:100%; display:flex; flex-direction:column; gap:12px;">
+                            <div style="border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:8px;">
+                                <div style="font-size:20px; font-weight:bold; color:#1C1917; font-family:'DYmingA',serif;">${currentTaskItem}</div>
+                            </div>
+
+                            <div style="font-size:14px; line-height:1.6; display:flex; flex-direction:column; gap:6px;">
+                                <div><strong style="color:#7F8C8D;">发起日期:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.发起日期 || '未知'}</span></div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                ${renderTaskProgress(item.任务进度)}
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 任务内容 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.任务内容 || '无'}</div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 预期成果 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.预期成果 || '无'}</div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentTaskTab === '长期任务') {
+                    const item = _.get(vars, `stat_data.任务.长期任务.${currentTaskItem}`, {});
+                    detailHtml = `
+                        <div class="social-glass" style="padding: 16px; min-height:100%; display:flex; flex-direction:column; gap:12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:8px;">
+                                <div style="font-size:20px; font-weight:bold; color:#1C1917; font-family:'DYmingA',serif;">${currentTaskItem}</div>
+                                <div style="font-size:13px; font-weight:bold; color:#2C3E50; background:rgba(0,0,0,0.05); padding:3px 8px; border-radius:4px;">目标: ${item.任务对象 || '无'}</div>
+                            </div>
+
+                            <div style="font-size:14px; line-height:1.6; display:flex; flex-direction:column; gap:6px;">
+                                <div><strong style="color:#7F8C8D;">发起日期:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.发起日期 || '未知'}</span></div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                ${renderTaskProgress(item.任务进度)}
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 任务内容 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.任务内容 || '无'}</div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#b23a2a; font-size:14px; margin-bottom:4px;">🎁 完成奖励</div>
+                                <div style="font-size:13px; color:#b23a2a; line-height:1.6; background:rgba(178,58,42,0.02); padding:10px; border-radius:6px; border:1px solid rgba(178,58,42,0.1); font-family:'XiangcuiDengcusong',serif; font-weight:bold;">${item.完成奖励 || '无'}</div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentTaskTab === '短期任务') {
+                    const item = _.get(vars, `stat_data.任务.短期任务.${currentTaskItem}`, {});
+                    detailHtml = `
+                        <div class="social-glass" style="padding: 16px; min-height:100%; display:flex; flex-direction:column; gap:12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:8px;">
+                                <div style="font-size:20px; font-weight:bold; color:#1C1917; font-family:'DYmingA',serif;">${currentTaskItem}</div>
+                                <div style="font-size:13px; font-weight:bold; color:#2C3E50; background:rgba(0,0,0,0.05); padding:3px 8px; border-radius:4px;">对象: ${item.任务对象 || '无'}</div>
+                            </div>
+
+                            <div style="font-size:14px; line-height:1.6; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                                <div><strong style="color:#7F8C8D;">发起日期:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.发起日期 || '未知'}</span></div>
+                                <div><strong style="color:#7F8C8D;">截止日期:</strong> <span style="font-weight:bold; color:#b23a2a;">${item.截止日期 || '无'}</span></div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                ${renderTaskProgress(item.任务进度)}
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 任务内容 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.任务内容 || '无'}</div>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="background:rgba(178,58,42,0.02); padding:10px; border-radius:6px; border:1px solid rgba(178,58,42,0.1);">
+                                    <div style="font-weight:bold; color:#b23a2a; font-size:13px; margin-bottom:4px; border-bottom:1px solid rgba(178,58,42,0.1); padding-bottom:2px;">🎁 完成奖励</div>
+                                    <div style="font-size:13px; color:#b23a2a; line-height:1.4; font-family:'XiangcuiDengcusong',serif; font-weight:bold;">${item.完成奖励 || '无'}</div>
+                                </div>
+                                <div style="background:rgba(44,39,36,0.02); padding:10px; border-radius:6px; border:1px solid rgba(44,39,36,0.15);">
+                                    <div style="font-weight:bold; color:#555; font-size:13px; margin-bottom:4px; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:2px;">💀 失败后果</div>
+                                    <div style="font-size:13px; color:#2c2724; line-height:1.4; font-family:'XiangcuiDengcusong',serif; font-weight:bold;">${item.失败后果 || '无'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentTaskTab === '循环事件') {
+                    const item = _.get(vars, `stat_data.任务.循环事件.${currentTaskItem}`, {});
+                    detailHtml = `
+                        <div class="social-glass" style="padding: 16px; min-height:100%; display:flex; flex-direction:column; gap:12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:8px;">
+                                <div style="font-size:20px; font-weight:bold; color:#1C1917; font-family:'DYmingA',serif;">${currentTaskItem}</div>
+                                <div style="font-size:13px; font-weight:bold; color:#2C3E50; background:rgba(0,0,0,0.05); padding:3px 8px; border-radius:4px;">对象: ${item.任务对象 || '无'}</div>
+                            </div>
+
+                            <div style="font-size:14px; line-height:1.6; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                                <div><strong style="color:#7F8C8D;">发起日期:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.发起日期 || '未知'}</span></div>
+                                <div><strong style="color:#7F8C8D;">循环周期:</strong> <span style="font-weight:bold; color:#2C3E50;">${item.循环日期 || '无'}</span></div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 事件内容 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.事件内容 || '无'}</div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#1C1917; font-size:14px; margin-bottom:4px;">【 完成判定 】</div>
+                                <div style="font-size:13px; color:#2C3E50; line-height:1.6; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); font-family:'XiangcuiDengcusong',serif;">${item.完成判定 || '无'}</div>
+                            </div>
+
+                            <div style="border-top:1px dashed rgba(0,0,0,0.1); padding-top:8px;">
+                                <div style="font-weight:bold; color:#10B981; font-size:14px; margin-bottom:4px;">🌟 获得成果</div>
+                                <div style="font-size:13px; color:#047857; line-height:1.6; background:rgba(16,185,129,0.02); padding:10px; border-radius:6px; border:1px solid rgba(16,185,129,0.1); font-family:'XiangcuiDengcusong',serif; font-weight:bold;">${item.获得成果 || '无'}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                $('#task-detail').html(detailHtml);
+            };
+
+            const renderTasks = (vars) => {
+                renderTaskPanel(vars);
+            };
+
+            const parseRemainCards = (remainStr) => {
+                /* takes something like "石级x5丨铜级x5丨银级x5丨金级x5" */
+                const parts = remainStr.split('丨');
+                let html = '<div style="display:flex; gap:6px; width:100%; justify-content:space-between; margin-top:4px;">';
+                parts.forEach(part => {
+                    const kv = part.split('x');
+                    if (kv.length === 2) {
+                        const tier = kv[0].trim();
+                        const qty = kv[1].trim();
+                        let tierClass = 'demon-color-' + tier;
+                        html += `
+                            <div style="flex:1; background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.05); border-radius:4px; padding:3px 0; text-align:center; display:flex; flex-direction:column; align-items:center;">
+                                <span class="${tierClass}" style="font-size:10px; font-weight:bold;">${tier[0]}</span>
+                                <span style="font-size:12px; font-weight:bold; color:#ecf0f1; font-family:monospace; margin-top:2px;">${qty}</span>
+                            </div>
+                        `;
+                    }
+                });
+                html += '</div>';
+                return html;
+            };
+
+            const renderCards = (vars) => {
+                const cardSys = _.get(vars, 'stat_data.恶魔卡系统', {});
+                const currentCard = cardSys.当前抽取恶魔卡 || '无';
+
+                /* Parse tier of current drawn card to colorize */
+                let currentTier = '石级';
+                if (currentCard.includes('金级')) { currentTier = '金级'; }
+                else if (currentCard.includes('银级')) { currentTier = '银级'; }
+                else if (currentCard.includes('铜级')) { currentTier = '铜级'; }
+
+                const currentTierClass = 'demon-color-' + currentTier;
+                const currentBorderClass = 'demon-border-' + currentTier;
+
+                /* Left Column: Status */
+                const leftHtml = `
+                    <div class="social-glass" style="padding: 16px; flex: 1; display:flex; flex-direction:column; gap:12px; background:rgba(20,5,5,0.6) !important; border-color:#4a1212 !important;">
+                        <div style="text-align:center; border-bottom:1px solid rgba(255,0,0,0.15); padding-bottom:8px; margin-bottom:4px;">
+                            <span style="font-size:16px; font-weight:bold; color:#ff4444; letter-spacing:2px; font-family:'DYmingA',serif;">👿 恶魔之契</span>
+                        </div>
+
+                        <div>
+                            <div style="font-size:12px; color:#ff8888; margin-bottom:4px;">当前抽取恶魔卡:</div>
+                            <div class="${currentBorderClass}" style="padding:15px; text-align:center; border: 2px dashed; border-radius:8px; font-size:16px; font-weight:bold; font-family:'DYmingA',serif; letter-spacing:1px; background:rgba(0,0,0,0.5);">
+                                <span class="${currentTierClass}">${currentCard}</span>
+                            </div>
+                        </div>
+
+                        <div style="background:rgba(178,58,42,0.1); border-left:4px solid #b23a2a; padding:10px; border-radius:4px; margin-top:4px;">
+                            <div style="font-size:11px; color:#ffaaaa; margin-bottom:2px; font-weight:bold;">💀 恶魔卡死亡期限</div>
+                            <div style="font-size:13px; font-weight:bold; color:#ff3333; font-family:monospace; letter-spacing:0.5px; animation: demonDeadPulse 1s infinite alternate;">
+                                ${cardSys.恶魔卡死亡期限 || '未生效'}
+                            </div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:13px;">
+                            <div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.05); text-align:center;">
+                                <div style="color:#ff8888; font-size:11px; margin-bottom:2px;">目标级别</div>
+                                <div style="font-weight:bold; color:#ecf0f1;">${cardSys.targetLevel || cardSys.目标级别 || '无'}</div>
+                            </div>
+                            <div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.05); text-align:center;">
+                                <div style="color:#ff8888; font-size:11px; margin-bottom:2px;">重抽次数</div>
+                                <div style="font-weight:bold; color:#ecf0f1; font-family:monospace;">${cardSys.redrawCount || cardSys.重抽次数 || 0}次</div>
+                            </div>
+                        </div>
+
+                        <div style="border-top:1px dashed rgba(255,0,0,0.15); padding-top:12px; margin-top:auto; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                            <div style="font-size:12px; color:#ff8888; font-weight:bold; margin-bottom:4px; letter-spacing:1px;">⚡ 恶魔点数</div>
+                            <div style="font-size:26px; font-weight:bold; color:#ff3333; text-shadow:0 0 10px #ff0000, 0 0 2px #ff0000; font-family:monospace; tracking:1px;">
+                                ${cardSys.恶魔点数 || 0} Pts
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                /* Center Column: Shop (6 rounded squares) */
+                const shopObj = cardSys.恶魔商城 || {};
+                let shopGridHtml = '';
+
+                /* Create slots 商品1 to 商品6 */
+                for (let i = 1; i <= 6; i++) {
+                    const itemKey = '商品' + i;
+                    const item = shopObj[itemKey] || { 商品名称: '封印槽位', 商品简介: '等待深渊之主上架商品...', 对应品质: '石级', 需要点数: 999 };
+                    const name = item.商品名称 || '空无一物';
+                    const desc = item.商品简介 || '神秘的虚空之中没有任何声息...';
+                    const quality = item.对应品质 || '石级';
+                    const pts = item.需要点数 || 0;
+
+                    const borderClass = 'demon-border-' + quality;
+                    const colorClass = 'demon-color-' + quality;
+
+                    shopGridHtml += `
+                        <div class="${borderClass}" style="position:relative; aspect-ratio:1.1; border-radius:12px; background:rgba(0,0,0,0.55); border:2px solid; padding:10px; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.7); transition: transform 0.2s;">
+                            <!-- Info toggle trigger circle -->
+                            <div class="demon-info-trigger" data-desc="${desc}" style="position:absolute; top:8px; right:8px; width:16px; height:16px; border-radius:50%; background:#2a0505; border:1px solid #ff3333; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10; font-size:11px; font-weight:bold; color:#ff3333; box-shadow:0 0 4px #ff0000;">
+                                ?
+                            </div>
+
+                            <!-- Desc Overlay (Initially hidden) -->
+                            <div class="demon-shop-desc-overlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(12,2,2,0.96); padding:10px; font-size:11px; color:#ffcccc; overflow-y:auto; line-height:1.4; z-index:9; border-radius:10px; word-break:break-all; font-family:'XiangcuiDengcusong',serif;">
+                                ${desc}
+                            </div>
+
+                            <div style="margin-top:4px; text-align:center; padding:0 12px;">
+                                <div style="font-size:13px; font-weight:bold; color:#ecf0f1; font-family:'DYmingA',serif; line-height:1.3; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">
+                                    ${name}
+                                </div>
+                            </div>
+
+                            <!-- Hanging Blood tag -->
+                            <div style="text-align:center; padding: 4px 6px; background: rgba(30,5,5,0.8); border: 1px dashed #ff3333; border-radius:4px; font-family: 'DYmingA', serif; font-size:12px; font-weight:bold; color:#ff3333; text-shadow: 1px 1px 4px #000, 0 0 8px #ff0000; letter-spacing:0.5px; transform: rotate(-2deg); transform-origin: center; margin: 4px auto 0 auto; width: fit-content; max-width:100%;">
+                                👿 ${pts} Pts
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const centerHtml = `
+                    <div class="social-glass" style="padding: 16px; flex: 1.4; display:flex; flex-direction:column; gap:12px; background:rgba(20,5,5,0.6) !important; border-color:#4a1212 !important;">
+                        <div style="text-align:center; border-bottom:1px solid rgba(255,0,0,0.15); padding-bottom:8px; margin-bottom:4px;">
+                            <span style="font-size:16px; font-weight:bold; color:#ff4444; letter-spacing:2px; font-family:'DYmingA',serif;">🛒 恶魔之馈（商城）</span>
+                        </div>
+                        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; flex:1; align-content:center;">
+                            ${shopGridHtml}
+                        </div>
+                    </div>
+                `;
+
+                /* Right Column: Card Decks */
+                const remainObj = cardSys.剩余恶魔卡 || {};
+                const categories = ['奢靡卡', '纵欲卡', '杀戮卡', '恶意卡', '异变卡'];
+                let deckHtml = '';
+
+                categories.forEach(cat => {
+                    const val = remainObj[cat] || '石级x0丨铜级x0丨银级x0丨金级x0';
+                    deckHtml += `
+                        <div style="background:rgba(0,0,0,0.45); border:1px solid rgba(255,0,0,0.15); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:4px; box-shadow:inset 0 0 6px rgba(0,0,0,0.5);">
+                            <div style="font-size:13px; font-weight:bold; color:#ff9999; font-family:'DYmingA',serif; display:flex; justify-content:space-between; align-items:center;">
+                                <span>🎴 ${cat}</span>
+                            </div>
+                            ${parseRemainCards(val)}
+                        </div>
+                    `;
+                });
+
+                const rightHtml = `
+                    <div class="social-glass" style="padding: 16px; flex: 0.9; display:flex; flex-direction:column; gap:12px; background:rgba(20,5,5,0.6) !important; border-color:#4a1212 !important;">
+                        <div style="text-align:center; border-bottom:1px solid rgba(255,0,0,0.15); padding-bottom:8px; margin-bottom:4px;">
+                            <span style="font-size:16px; font-weight:bold; color:#ff4444; letter-spacing:2px; font-family:'DYmingA',serif;">📦 契约余量（卡盒）</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:10px; flex:1; justify-content:center;">
+                            ${deckHtml}
+                        </div>
+                    </div>
+                `;
+
+                const containerHtml = `
+                    <div style="display:flex; gap:15px; width:100%; height:100%; align-items:stretch;">
+                        ${leftHtml}
+                        ${centerHtml}
+                        ${rightHtml}
+                    </div>
+                `;
+
+                $('#panel-cards').html(containerHtml);
+            };
+
+                renderMovablePanel(vars);
+                renderSkills(vars);
+                renderSocial(vars);
+                renderOrg(vars);
+                renderTasks(vars);
+                renderCards(vars);
+            };
+
+            const render = () => {
+                const vars = getAllVariables();
+                renderMain(vars);
+                renderOtherPanels(vars);
+            };
+
+            eventOn(Mvu.events.VARIABLE_UPDATE_ENDED, render);
+            render();
+        }));
+    </script>
+</body>
+</html>
